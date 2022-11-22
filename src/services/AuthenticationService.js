@@ -7,6 +7,9 @@ export default {
   signUp(data) {
     return Api().post('signup', data)
   },
+  singerSignUp(data) {
+    return Api().post('singer/signup',data)
+  },
   updateUserDetails(data) {
     return Api().put('auth/updatedetails', data)
   },
@@ -17,7 +20,7 @@ export default {
     return Api().put('auth/updatepassword', data)
   },
   me(token) {
-    return Api().post('auth/me', {
+    return Api().post('authenticate/me', {
       headers: { Authorization: `Bearer ${token}` }
     })
   }

@@ -3,7 +3,8 @@ import AuthenticationService from '@/services/AuthenticationService'
 const state = {
   url: process.env.VUE_APP_URL,
   token: localStorage.getItem('token') || null,
-  user: JSON.parse(localStorage.getItem('user')) || null,
+  user: localStorage.getItem('user') ?
+JSON.parse(localStorage.getItem('user')) : null,
   isUserLoggedIn: localStorage.getItem('token') || false
 }
 
@@ -45,6 +46,17 @@ const actions = {
   signUp({ commit }, credentials) {
     return new Promise((resolve, reject) => {
       AuthenticationService.signUp(credentials)
+        .then(({ data }) => {
+          commit('SET_TOKEN', data.token)
+          localStorage.setItem('token', data.token)
+          resolve(data)
+        })
+        .catch((err) => reject(err))
+    })
+  },
+  singerSignUp({ commit }, credentials) {
+    return new Promise((resolve, reject) => {
+      AuthenticationService.singerSignUp(credentials)
         .then(({ data }) => {
           commit('SET_TOKEN', data.token)
           localStorage.setItem('token', data.token)

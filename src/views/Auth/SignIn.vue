@@ -98,7 +98,6 @@
               Password: ["We don't reconize, this password"]
             })
           })
-  
         if (!data) return
         const user = await this.$store
           .dispatch('getCurrentUser', data.token)
@@ -107,7 +106,7 @@
         if (!user) return
   
         this.loading = false
-        this.$router.push({ name: 'Home' })
+        this.$router.push({ name: 'home' })
       }
     }
   }
