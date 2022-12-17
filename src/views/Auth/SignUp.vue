@@ -245,8 +245,12 @@
   </template>
   
   <script>
+  import { mapGetters } from 'vuex'
   export default {
     name: 'SignUp',
+    computed: {
+      ...mapGetters(["getAuthToken", "getUserEmail", "getUserID", "isLoggedIn"]),
+    },
     data: () => ({
       name: '',
       email: '',
@@ -260,13 +264,13 @@
         this.loading = true
   
         const data = await this.$store
-          .dispatch('signUp', {
+          .dispatch('registerUser', {
             user: {
-              name: this.name,
+              // name: this.name,
               email: this.email,
-              age: this.age,
+              // age: this.age,
               password: this.password,
-              password_confirmation: this.confirmPassword
+              // password_confirmation: this.confirmPassword
             }
           })
           .catch((err) => {
@@ -289,11 +293,12 @@
   
         if (!data) return
   
-        const user = await this.$store
-          .dispatch('getCurrentUser', data.token)
-          .catch((err) => console.log(err))
+        // const user = await this.$store
+        //   .dispatch('getCurrentUser', data.token)
+        //   .catch((err) => console.log(err))
   
-        if (!user) return
+        // if (!user) return
+        console.log(this.getUserEmail)
         this.loading = false
         this.$router.push({ name: 'Home' })
       }
