@@ -36,7 +36,7 @@
             </div>
   
             <ValidationProvider
-              rules="required|size:5000"
+              rules="required|size:10000"
               v-slot="{ errors }"
               name="file"
               ref="provider"
@@ -261,12 +261,11 @@
         const { valid } = await this.$refs.provider.validate(e);
   
         if (!valid) return;
-        console.log(this.selectedFile)
-  
         this.uploading = true;
         const fd = new FormData();
-        fd.append("video", this.selectedFile, this.selectedFile.name);
-  
+     
+        fd.append("url", this.selectedFile);
+        fd.append("singer_id", 1);
         let video = await VideoService.uploadVideo(fd, {
           onUploadProgress: (uploadEvent) => {
             this.value = Math.round(
@@ -281,15 +280,13 @@
             this.uploaded = true;
             this.uploading = false;
           });
-  
-        if (!video) return;
-        video = video.data.data;
-  
-        this.formData.id = video._id;
-        this.formData.title = video.title;
-        this.formData.description = video.description;
-        this.formData.cateogry = video.cateogry;
-        this.url = `${process.env.VUE_APP_URL}/api/v1/videos/${video._id}/thumbnails`;
+
+        video = video.data;
+        this.formData.id = video.id;
+        // this.formData.title = video.title;
+        // this.formData.description = video.description;
+        // this.formData.cateogry = video.cateogry;
+        // this.url = `${process.env.VUE_APP_URL}/api/v1/videos/${video._id}/thumbnails`;
         // this.interval = setInterval(() => {
         //   if (this.value === 100) {
         //     this.uploaded = true
@@ -301,17 +298,15 @@
         // }
       },
       async submit() {
-        if (this.imgDataUrl == "") return;
         this.submitLoading = true;
-        this.formData.category = this.categories.find(
-          (category) => category.title === this.formData.category
-        )._id;
+      
   
-        const video = await VideoService.updateVideo(this.formData.id, {
-          title: this.formData.title,
-          description: this.formData.description,
-          categoryId: this.formData.category,
-          status: this.formData.visibilty.toLowerCase(),
+        const video = await VideoService.updateVideo(this.formData.id,{
+          video: {
+            title: this.formData.title,
+            description: this.formData.description,
+            category_id: this.categoryId(),
+          }
         })
           .catch((err) => {
             console.log(err);
@@ -366,6 +361,9 @@
 				console.log(status);
 				console.log('field: ' + field);
 			},
+      categoryId() {
+        return this.categories.indexOf(this.formData.category)
+      }
     },
     components: {
       // myUpload,
