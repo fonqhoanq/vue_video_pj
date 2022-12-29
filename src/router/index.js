@@ -8,12 +8,11 @@ import DashBoard from '../views/Singer/DashBoard.vue'
 import IndexDashBoard from '../views/Singer/Index.vue'
 import SingerSignUp from '../views/Auth/SingerSignUp.vue'
 // import StudioNavBar from '../components/StudioNavBar.vue'
-// import NavBar from '../components/NavBar.vue'
 Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/home',
+    path: '/',
     name: 'Home',
     component: () => import(/* webpackChunkName: "about" */ '../views/HomeView.vue')
   },

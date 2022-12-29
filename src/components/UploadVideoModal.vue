@@ -36,7 +36,7 @@
             </div>
   
             <ValidationProvider
-              rules="required|size:10000"
+              rules="required|size:15000"
               v-slot="{ errors }"
               name="file"
               ref="provider"
@@ -161,7 +161,7 @@
                 </form>
               </ValidationObserver>
             </v-col>
-            <!-- <v-col
+            <v-col
               order-sm="1"
               cols="12"
               sm="12"
@@ -171,15 +171,16 @@
             >
               <v-btn text @click="toggleShow">Upload Thumbnails</v-btn>
               <my-upload
-                field="img"
+                field="thumbnails"
                 @crop-success="cropSuccess"
-                @crop-upload-fail="cropUploadFail"
-                v-model="show"
-                :width="720"
+                @crop-upload-success="cropUploadSuccess"
+                :value="show"
+                :model="show"
+                :width="1280"
                 :height="720"
-                :url="url"
+                :url= "url"
                 :headers="headers"
-                img-format="jpg"
+                img-format="jpg|png"
                 langType="en"
               ></my-upload>
               <v-responsive width="330" class="mx-auto">
@@ -196,7 +197,7 @@
               <p v-if="imgDataUrl == ''" class="red--text">
                 Please upload thumbnail
               </p>
-            </v-col> -->
+            </v-col>
           </v-row>
         </v-card-text>
         <v-card-actions v-if="!uploaded">
@@ -211,7 +212,7 @@
   </template>
   
   <script>
-  // import myUpload from "vue-image-crop-upload";
+  import myUpload from "/home/dell/vue_video_pj/node_modules/vue-image-crop-upload/upload-2.vue";
   import VideoService from "@/services/VideoService";
   // import CategoryService from "@/services/CategoryService";
   export default {
@@ -219,8 +220,6 @@
     props: ["openDialog"],
     data: function () {
       return {
-        // dialog: this.openDialog ? this.openDialog : false,
-        // openDialog: true,
         valid: false,
         uploaded: false,
         uploading: false,
@@ -233,11 +232,11 @@
           (value) =>
             !value ||
             value.size > 5000000 ||
-            `Video size should be less than 5 MB!, ${value.size}`,
+            `Video size should be less than 15 MB!, ${value.size}`,
         ],
         categoriesTitles: ["Pop", "Rock"],
         categories: ["Pop", "Rock"],
-        visibilty: ["Public", "Private"],
+        visibilty: ["Private", "Public"],
         selectedFile: [],
         formData: {
           id: "",
@@ -286,7 +285,7 @@
         // this.formData.title = video.title;
         // this.formData.description = video.description;
         // this.formData.cateogry = video.cateogry;
-        // this.url = `${process.env.VUE_APP_URL}/api/v1/videos/${video._id}/thumbnails`;
+        this.url = `http://127.0.0.1:3000/videos/${video.id}/thumbnails`;
         // this.interval = setInterval(() => {
         //   if (this.value === 100) {
         //     this.uploaded = true
@@ -306,6 +305,7 @@
             title: this.formData.title,
             description: this.formData.description,
             category_id: this.categoryId(),
+            public: this.isPublic()
           }
         })
           .catch((err) => {
@@ -317,16 +317,12 @@
           });
   
         if (!video) return;
-        // this.$nextTick(() => {
-        //   this.$refs.form.reset()
-        // })
         this.formData.visibilty = "";
         this.imgDataUrl = "";
         this.selectedFile = [];
         this.closeModal();
   
-        this.$router.push(`/studio/videos?${new Date()}`);
-        // console.log('submittied')
+        this.$router.push("/studio");
       },
       // async getCategories() {
       //   this.categoryLoading = true;
@@ -356,6 +352,11 @@
         this.imgDataUrl = imgDataUrl;
         console.log(this.imgDataUrl)
       },
+      cropUploadSuccess(jsonData, field){
+				console.log('-------- upload success --------');
+				console.log(jsonData);
+				console.log('field: ' + field);
+			},
       cropUploadFail(status, field){
 				console.log('-------- upload fail --------');
 				console.log(status);
@@ -363,10 +364,16 @@
 			},
       categoryId() {
         return this.categories.indexOf(this.formData.category)
+      },
+      isPublic() {
+        if (this.formData.visibilty === 'Public') {
+          return true
+        } 
+        return false
       }
     },
     components: {
-      // myUpload,
+      myUpload,
     },
     // mounted() {
     //   this.getCategories();
