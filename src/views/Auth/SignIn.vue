@@ -85,7 +85,7 @@
       loading: false
     }),
     computed: {
-      ...mapGetters(["getAuthToken", "getUserEmail", "getUserID", "isLoggedIn"]),
+      ...mapGetters(["getAuthToken", "getUserEmail", "getUserID", "isLoggedIn", "getCurrentUser"]),
     },
     methods: {
       async signin() {
@@ -93,24 +93,31 @@
         this.loading = true
   
         const data = await this.$store
-          .dispatch('loginUser', { email: this.email, password: this.password })
+          .dispatch('loginUser', { 
+            user: {
+              email: this.email,
+              password: this.password
+            }
+          })
           .catch((err) => {
             this.loading = false
-            console.log(err)
+            console.log("tesst")
+            console.log(err.response)
             this.$refs.form.setErrors({
               Email: ["We don't reconize, this email"],
               Password: ["We don't reconize, this password"]
             })
           })
-        if (!data) return
+        // console.log(data.data.user)
+        if (data) return
         // const user = await this.$store
         //   .dispatch('getCurrentUser', data.token)
         //   .catch((err) => console.log(err))
-  
+    
         // if (!user) return
-        console.log(this.getUserEmail)
+        console.log(this.getCurrentUser)
         this.loading = false
-        this.$router.push({ name: 'home' })
+        this.$router.push({ name: 'Home' })
       }
     }
   }

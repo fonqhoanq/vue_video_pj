@@ -25,6 +25,9 @@ const getters = {
       state.auth_token == null || state.auth_token == JSON.stringify(null);
     return !loggedOut;
   },
+  getCurrentUser(state) {
+    return state.user
+  }
 };
 const actions = {
   registerUser({ commit }, payload) {
@@ -92,7 +95,9 @@ const actions = {
 };
 const mutations = {
   setUserInfo(state, data) {
+    console.log(data);
     state.user = data.data.user;
+    console.log(state.user)
     state.auth_token = data.headers.authorization;
     axios.defaults.headers.common["Authorization"] = data.headers.authorization;
     localStorage.setItem("auth_token", data.headers.authorization);
