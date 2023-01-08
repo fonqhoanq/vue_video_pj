@@ -76,6 +76,7 @@
   </template>
   
   <script>
+  import { mapGetters } from 'vuex'
   export default {
     name: 'SignIn',
     data: () => ({
@@ -83,30 +84,47 @@
       password: '',
       loading: false
     }),
+    computed: {
+      ...mapGetters(["getAuthToken", "getUserEmail", "getUserID", "isLoggedIn", "getCurrentUser"]),
+    },
     methods: {
       async signin() {
         if (this.loading) return
         this.loading = true
   
         const data = await this.$store
-          .dispatch('signIn', { email: this.email, password: this.password })
+          .dispatch('loginUser', { 
+            user: {
+              email: this.email,
+              password: this.password
+            }
+          })
           .catch((err) => {
             this.loading = false
-            console.log(err)
+            console.log("tesst")
+            console.log(err.response)
             this.$refs.form.setErrors({
               Email: ["We don't reconize, this email"],
               Password: ["We don't reconize, this password"]
             })
           })
-        if (!data) return
-        const user = await this.$store
-          .dispatch('getCurrentUser', data.token)
-          .catch((err) => console.log(err))
-  
-        if (!user) return
-  
-        this.loading = false
-        this.$router.push({ name: 'home' })
+        // console.log(data.data.user)
+        if (data) return
+        // const user = await this.$store
+        //   .dispatch('getCurrentUser', data.token)
+        //   .catch((err) => console.log(err))
+    
+        // if (!user) return
+        console.log(data)
+        if (!this.getCurrentUser.id) {
+          this.$refs.form.setErrors({
+            Password: ["We don't reconize this email and password"]
+          })
+          this.loading = false
+        } else {
+          this.loading = false
+          this.$router.push({ name: 'Home' })
+        }
       }
     }
   }

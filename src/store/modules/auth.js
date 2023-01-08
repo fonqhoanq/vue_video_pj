@@ -1,103 +1,126 @@
-import AuthenticationService from '@/services/AuthenticationService'
+import axios from "axios";
+
+const BASE_URL = "http://localhost:3000/";
 
 const state = {
-  url: process.env.VUE_APP_URL,
-  token: localStorage.getItem('token') || null,
-  user: localStorage.getItem('user') ?
-JSON.parse(localStorage.getItem('user')) : null,
-  isUserLoggedIn: localStorage.getItem('token') || false
-}
-
+  auth_token: null,
+  user: {
+    id: null,
+    username: null,
+    email: null,
+    age: null,
+    avatarUrl: null
+  },
+};
 const getters = {
-  getUrl: (state) => {
-    return state.url
+  getAuthToken(state) {
+    return state.auth_token;
   },
-  isAuthenticated: (state) => {
-    return state.isUserLoggedIn
+  getUserEmail(state) {
+    return state.user?.email;
   },
-  getToken: (state) => {
-    return state.token
+  getUserID(state) {
+    return state.user?.id;
   },
-  currentUser: (state) => {
+  isLoggedIn(state) {
+    const loggedOut =
+      state.auth_token == null || state.auth_token == JSON.stringify(null);
+    return !loggedOut;
+  },
+  getCurrentUser(state) {
     return state.user
   }
-}
-
-const mutations = {
-  SET_TOKEN(state, token) {
-    state.token = token
-    if (token) {
-      state.isUserLoggedIn = true
-    } else {
-      state.isUserLoggedIn = false
-    }
-  },
-  SET_USER_DATA(state, data) {
-    state.user = data
-  },
-  CLEAR_AUTH(state) {
-    state.token = null
-    state.user = null
-    state.isUserLoggedIn = false
-  }
-}
-
+};
 const actions = {
-  signUp({ commit }, credentials) {
+  registerUser({ commit }, payload) {
     return new Promise((resolve, reject) => {
-      AuthenticationService.signUp(credentials)
-        .then(({ data }) => {
-          commit('SET_TOKEN', data.token)
-          localStorage.setItem('token', data.token)
-          resolve(data)
+      axios
+        .post(`${BASE_URL}users`, payload)
+        .then((response) => {
+          commit("setUserInfo", response);
+          resolve(response);
         })
-        .catch((err) => reject(err))
-    })
+        .catch((error) => {
+          reject(error);
+        });
+    });
   },
-  singerSignUp({ commit }, credentials) {
-    return new Promise((resolve, reject) => {
-      AuthenticationService.singerSignUp(credentials)
-        .then(({ data }) => {
-          commit('SET_TOKEN', data.token)
-          localStorage.setItem('token', data.token)
-          resolve(data)
+  loginUser({ commit }, payload) {
+    new Promise((resolve, reject) => {
+      axios
+        .post(`${BASE_URL}users/sign_in`, payload)
+        .then((response) => {
+          commit("setUserInfo", response);
+          resolve(response);
         })
-        .catch((err) => reject(err))
-    })
+        .catch((error) => {
+          reject(error);
+        });
+    });
   },
-  signIn({ commit }, credentials) {
-    return new Promise((resolve, reject) => {
-      AuthenticationService.signIn(credentials)
-        .then(({ data }) => {
-          localStorage.setItem('token', data.token)
-          commit('SET_TOKEN', data.token)
-
-          resolve(data)
+  logoutUser({ commit }) {
+    const config = {
+      headers: {
+        authorization: state.auth_token,
+      },
+    };
+    new Promise((resolve, reject) => {
+      axios
+        .delete(`${BASE_URL}users/sign_out`, config)
+        .then(() => {
+          commit("resetUserInfo");
+          resolve();
         })
-        .catch((err) => reject(err))
-    })
+        .catch((error) => {
+          reject(error);
+        });
+    });
   },
-  getCurrentUser({ commit }, token) {
-    return new Promise((resolve, reject) => {
-      AuthenticationService.me(token)
-        .then(({ data }) => {
-          localStorage.setItem('user', JSON.stringify(data.data))
-          commit('SET_USER_DATA', data.data)
-          resolve(data)
+  loginUserWithToken({ commit }, payload) {
+    const config = {
+      headers: {
+        Authorization: payload.auth_token,
+      },
+    };
+    new Promise((resolve, reject) => {
+      axios
+        .get(`${BASE_URL}member-data`, config)
+        .then((response) => {
+          commit("setUserInfoFromToken", response);
+          resolve(response);
         })
-        .catch((err) => reject(err))
-    })
+        .catch((error) => {
+          reject(error);
+        });
+    });
   },
-  signOut({ commit }) {
-    localStorage.removeItem('token')
-    localStorage.removeItem('user')
-    commit('CLEAR_AUTH')
-  }
-}
-
+};
+const mutations = {
+  setUserInfo(state, data) {
+    state.user = data.data.user;
+    console.log(state.user)
+    state.auth_token = data.headers.authorization;
+    axios.defaults.headers.common["Authorization"] = data.headers.authorization;
+    localStorage.setItem("auth_token", data.headers.authorization);
+  },
+  setUserInfoFromToken(state, data) {
+    state.user = data.data.user;
+    state.auth_token = localStorage.getItem("auth_token");
+  },
+  resetUserInfo(state) {
+    state.user = {
+      id: null,
+      username: null,
+      email: null,
+    };
+    state.auth_token = null;
+    localStorage.removeItem("auth_token");
+    axios.defaults.headers.common["Authorization"] = null;
+  },
+};
 export default {
   state,
   getters,
+  actions,
   mutations,
-  actions
-}
+};

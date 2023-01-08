@@ -245,8 +245,12 @@
   </template>
   
   <script>
+  import { mapGetters } from 'vuex'
   export default {
     name: 'SignUp',
+    computed: {
+      ...mapGetters(["getAuthToken", "getUserEmail", "getUserID", "isLoggedIn"]),
+    },
     data: () => ({
       name: '',
       email: '',
@@ -260,7 +264,7 @@
         this.loading = true
   
         const data = await this.$store
-          .dispatch('signUp', {
+          .dispatch('registerUser', {
             user: {
               name: this.name,
               email: this.email,
@@ -271,29 +275,17 @@
           })
           .catch((err) => {
             this.loading = false
-            const errors = err.response.data.error
-  
-            this.$refs.form.setErrors({
-              'Email': errors.find((error) => {
-                return error.field === 'email'
+            const status = err.response.status
+            console.log(err)
+            if (status == 500) {
+              this.$refs.form.setErrors({
+              'Email': ['This email is already taken']
               })
-                ? ['This email is already taken']
-                : null,
-              'Channel Name': errors.find((error) => {
-                return error.field === 'channelName'
-              })
-                ? ['This channel name is already taken']
-                : null
-            })
+            }
           })
   
         if (!data) return
   
-        const user = await this.$store
-          .dispatch('getCurrentUser', data.token)
-          .catch((err) => console.log(err))
-  
-        if (!user) return
         this.loading = false
         this.$router.push({ name: 'Home' })
       }

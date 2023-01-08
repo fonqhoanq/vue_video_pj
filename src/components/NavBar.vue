@@ -67,7 +67,7 @@
           outlined
           color="blue"
           class="font-weight-bold"
-          v-if="!$store.getters.isAuthenticated"
+          v-if="!isLoggedIn"
           router
           to="/signin"
         >
@@ -77,17 +77,21 @@
         <v-menu offset-y left v-else>
           <template v-slot:activator="{ on }">
             <v-btn small color="red" depressed fab v-on="on" class="white--text">
-              <v-avatar v-if="currentUser.photoUrl !== 'no-photo.jpg'">
+              <v-avatar v-if="!getCurrentUser.avatarUrl">
                 <img
-                  :src="`${getUrl}/uploads/avatars/${currentUser.photoUrl}`"
-                  :alt="`${currentUser.channelName} avatar`"
+                  :src="url"
                 />
               </v-avatar>
-              <template v-else>
+              <v-avatar v-else>
+                <img
+                  :src="getCurrentUser.avatarUrl"
+                />
+              </v-avatar>
+              <!-- <template v-else>
                 <span class="headline">
                   {{ currentUser.channelName.split('')[0].toUpperCase() }}
                 </span>
-              </template>
+              </template> -->
             </v-btn>
           </template>
   
@@ -95,13 +99,12 @@
             <v-list>
               <v-list-item>
                 <v-list-item-avatar>
-                  <v-avatar v-if="currentUser.photoUrl !== 'no-photo.jpg'">
+                  <v-avatar>
                     <img
-                      :src="`${getUrl}/uploads/avatars/${currentUser.photoUrl}`"
-                      :alt="`${currentUser.channelName} avatar`"
+                      :src="url"
                     />
                   </v-avatar>
-                  <template v-else>
+                  <!-- <template v-else>
                     <v-avatar color="red">
                       <span class="white--text headline ">
                         {{
@@ -109,15 +112,15 @@
                         }}</span
                       >
                     </v-avatar>
-                  </template>
+                  </template> -->
                 </v-list-item-avatar>
   
                 <v-list-item-content>
                   <v-list-item-title class="text-capitalize">{{
-                    currentUser.channelName
+                    getCurrentUser.name
                   }}</v-list-item-title>
                   <v-list-item-subtitle>{{
-                    currentUser.email
+                    getCurrentUser.email
                   }}</v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
@@ -128,7 +131,7 @@
             <v-list>
               <v-list-item
                 router
-                :to="`/channels/${$store.getters.currentUser._id}`"
+                :to="`/channels/${getCurrentUser.id}`"
               >
                 <v-list-item-icon>
                   <v-icon>mdi-account-box</v-icon>
@@ -282,6 +285,7 @@
   
   export default {
     data: () => ({
+      url: "https://cdn-icons-png.flaticon.com/512/219/219988.png",
       drawer: true,
       items: [
         {
@@ -417,7 +421,7 @@
       // user: null
     }),
     computed: {
-      ...mapGetters(['currentUser', 'getUrl', 'isAuthenticated'])
+      ...mapGetters(['currentUser', 'getUrl', 'isAuthenticated', "isLoggedIn", "getCurrentUser"])
     },
     methods: {
       async search() {
@@ -442,7 +446,7 @@
       },
       async getSubscribedChannels() {
         const channels = await SubscriptionService.getSubscribedChannels(
-          this.currentUser._id
+          this.getCurrentUser.id
         ).catch((err) => console.log(err))
         this.items[2].pages = channels.data.data
         this.channelLength = 3
@@ -453,8 +457,8 @@
         else this.channelLength = 3
       },
       signOut() {
-        this.$store.dispatch('signOut')
-        // this.$router.push('/')
+        this.$store.dispatch('logoutUser')
+        this.$router.push({ name: 'Signin'})
       }
     },
     // beforeRouteLeave(to, from, next) {
