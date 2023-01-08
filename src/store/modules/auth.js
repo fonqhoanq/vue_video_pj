@@ -8,6 +8,8 @@ const state = {
     id: null,
     username: null,
     email: null,
+    age: null,
+    avatarUrl: null
   },
 };
 const getters = {
@@ -95,7 +97,6 @@ const actions = {
 };
 const mutations = {
   setUserInfo(state, data) {
-    console.log(data);
     state.user = data.data.user;
     console.log(state.user)
     state.auth_token = data.headers.authorization;

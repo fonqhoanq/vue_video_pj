@@ -275,20 +275,13 @@
           })
           .catch((err) => {
             this.loading = false
-            const errors = err.response.data.error
-  
-            this.$refs.form.setErrors({
-              'Email': errors.find((error) => {
-                return error.field === 'email'
+            const status = err.response.status
+            console.log(err)
+            if (status == 500) {
+              this.$refs.form.setErrors({
+              'Email': ['This email is already taken']
               })
-                ? ['This email is already taken']
-                : null,
-              'Channel Name': errors.find((error) => {
-                return error.field === 'channelName'
-              })
-                ? ['This channel name is already taken']
-                : null
-            })
+            }
           })
   
         if (!data) return

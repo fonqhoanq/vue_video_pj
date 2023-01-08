@@ -115,9 +115,16 @@
         //   .catch((err) => console.log(err))
     
         // if (!user) return
-        console.log(this.getCurrentUser)
-        this.loading = false
-        this.$router.push({ name: 'Home' })
+        console.log(data)
+        if (!this.getCurrentUser.id) {
+          this.$refs.form.setErrors({
+            Password: ["We don't reconize this email and password"]
+          })
+          this.loading = false
+        } else {
+          this.loading = false
+          this.$router.push({ name: 'Home' })
+        }
       }
     }
   }
