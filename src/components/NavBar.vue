@@ -89,7 +89,7 @@
               </v-avatar>
               <!-- <template v-else>
                 <span class="headline">
-                  {{ currentUser.channelName.split('')[0].toUpperCase() }}
+                  {{ getCurrentUser.channelName.split('')[0].toUpperCase() }}
                 </span>
               </template> -->
             </v-btn>
@@ -108,7 +108,7 @@
                     <v-avatar color="red">
                       <span class="white--text headline ">
                         {{
-                          currentUser.channelName.split('')[0].toUpperCase()
+                          getCurrentUser.channelName.split('')[0].toUpperCase()
                         }}</span
                       >
                     </v-avatar>
@@ -158,15 +158,15 @@
       <v-navigation-drawer
         v-model="drawer"
         app
-        :clipped="$route.name !== 'Watch'"
-        :temporary="$route.name === 'Watch'"
+        :clipped="$route.name !== 'WatchVideo'"
+        :temporary="$route.name === 'WatchVideo'"
         id="nav"
       >
         <div tag="div" class="v-navigation-drawer__content" v-bar>
           <v-list dense nav class="py-0" tag="div">
             <v-list-item
               :class="{
-                'hidden-lg-and-up': $route.name === 'Watch' ? false : true
+                'hidden-lg-and-up': $route.name === 'WatchVideo' ? false : true
               }"
             >
               <v-app-bar-nav-icon
@@ -237,7 +237,7 @@
                 @click="moreChannels"
                 v-if="
                   parentItem.header === 'Subscriptions' &&
-                    isAuthenticated &&
+                    isLoggedIn &&
                     items[2].length > 0
                 "
                 block
@@ -421,7 +421,7 @@
       // user: null
     }),
     computed: {
-      ...mapGetters(['currentUser', 'getUrl', 'isAuthenticated', "isLoggedIn", "getCurrentUser"])
+      ...mapGetters(['getCurrentUser', 'getUrl', "isLoggedIn"])
     },
     methods: {
       async search() {
@@ -434,7 +434,7 @@
           searchText: this.searchText
         }
   
-        if (this.isAuthenticated)
+        if (this.isLoggedIn)
           await HistoryService.createHistory(data).catch((err) =>
             console.log(err)
           )
@@ -448,7 +448,7 @@
         const channels = await SubscriptionService.getSubscribedChannels(
           this.getCurrentUser.id
         ).catch((err) => console.log(err))
-        this.items[2].pages = channels.data.data
+        this.items[2].pages = channels.data
         this.channelLength = 3
       },
       moreChannels() {
@@ -481,17 +481,17 @@
       // if (this.$route.query['search-query'])
       //   this.searchText = this.$route.query['search-query']
   
-      if (this.currentUser) this.getSubscribedChannels()
-      // this.user = this.$store.getters.currentUser
+      if (this.getCurrentUser) this.getSubscribedChannels()
+      // this.user = this.$store.getters.getCurrentUser
       // console.log(this.user)
       this.drawer = this.$vuetify.breakpoint.mdAndDown ? false : true
       // console.log(this.$route.name)
-      this.drawer = this.$route.name === 'Watch' ? false : this.drawer
+      this.drawer = this.$route.name === 'WatchVideo' ? false : this.drawer
     },
     created() {
-      this.drawer = this.$route.name === 'Watch' ? false : this.drawer
+      this.drawer = this.$route.name === 'WatchVideo' ? false : this.drawer
   
-      if (!this.isAuthenticated) {
+      if (!this.isLoggedIn) {
         this.items[2].header = false
         this.items[0].pages.pop()
       }

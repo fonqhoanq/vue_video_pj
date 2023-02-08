@@ -60,15 +60,15 @@
         <v-menu offset-y left>
           <template v-slot:activator="{ on }">
             <v-btn small color="red" depressed fab v-on="on" class="white--text">
-              <v-avatar v-if="currentUser.photoUrl !== 'no-photo.jpg'">
+              <v-avatar v-if="getCurrentUser.photoUrl !== 'no-photo.jpg'">
                 <img
-                  :src="`${getUrl}/uploads/avatars/${currentUser.photoUrl}`"
-                  :alt="`${currentUser.channelName} avatar`"
+                  :src="`${getUrl}/uploads/avatars/${getCurrentUser.photoUrl}`"
+                  :alt="`${getCurrentUser.channelName} avatar`"
                 />
               </v-avatar>
               <template v-else>
                 <span class="headline">
-                  {{ currentUser.channelName.split('')[0].toUpperCase() }}
+                  {{ getCurrentUser.channelName.split('')[0].toUpperCase() }}
                 </span>
               </template>
             </v-btn>
@@ -78,17 +78,17 @@
             <v-list>
               <v-list-item>
                 <v-list-item-avatar>
-                  <v-avatar v-if="currentUser.photoUrl !== 'no-photo.jpg'">
+                  <v-avatar v-if="getCurrentUser.photoUrl !== 'no-photo.jpg'">
                     <img
-                      :src="`${getUrl}/uploads/avatars/${currentUser.photoUrl}`"
-                      :alt="`${currentUser.channelName} avatar`"
+                      :src="`${getUrl}/uploads/avatars/${getCurrentUser.photoUrl}`"
+                      :alt="`${getCurrentUser.channelName} avatar`"
                     />
                   </v-avatar>
                   <template v-else>
                     <v-avatar color="red">
                       <span class="white--text headline ">
                         {{
-                          currentUser.channelName.split('')[0].toUpperCase()
+                          getCurrentUser.channelName.split('')[0].toUpperCase()
                         }}</span
                       >
                     </v-avatar>
@@ -97,10 +97,10 @@
   
                 <v-list-item-content>
                   <v-list-item-title class="text-capitalize">{{
-                    currentUser.channelName
+                    getCurrentUser.channelName
                   }}</v-list-item-title>
                   <v-list-item-subtitle>{{
-                    currentUser.email
+                    getCurrentUser.email
                   }}</v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
@@ -111,7 +111,7 @@
             <v-list>
               <v-list-item
                 router
-                :to="`/channels/${$store.getters.currentUser._id}`"
+                :to="`/channels/${$store.getters.getCurrentUser._id}`"
               >
                 <v-list-item-icon>
                   <v-icon>mdi-account-box</v-icon>
@@ -199,37 +199,37 @@
                   color="red"
                   depressed
                   fab
-                  :to="`/channels/${currentUser._id}`"
+                  :to="`/channels/${getCurrentUser._id}`"
                   class="white--text mx-auto"
                 >
                   <v-avatar
                     height="96"
                     width="96"
-                    v-if="currentUser.photoUrl !== 'no-photo.jpg'"
+                    v-if="getCurrentUser.photoUrl !== 'no-photo.jpg'"
                   >
                     <!-- <img
-                      :src="`${getUrl}/uploads/avatars/${currentUser.photoUrl}`"
-                      :alt="`${currentUser.channelName} avatar`"
+                      :src="`${getUrl}/uploads/avatars/${getCurrentUser.photoUrl}`"
+                      :alt="`${getCurrentUser.channelName} avatar`"
                     /> -->
                   </v-avatar>
                   <!-- <template > -->
                   <span v-else class="display-3">
-                    {{ currentUser.channelName.split('')[0].toUpperCase() }}
+                    {{ getCurrentUser.channelName.split('')[0].toUpperCase() }}
                   </span>
                   <!-- </template> -->
-                  <!-- <span class="display-3" v-if="currentUser.photoUrl === 'no-photo.jpg'">
-                    {{ currentUser.channelName.split('')[0].toUpperCase() }}
+                  <!-- <span class="display-3" v-if="getCurrentUser.photoUrl === 'no-photo.jpg'">
+                    {{ getCurrentUser.channelName.split('')[0].toUpperCase() }}
                   </span> -->
                 </v-btn>
               </v-list-item>
   
-              <v-list-item link :to="`/channels/${currentUser._id}`">
+              <v-list-item link :to="`/channels/${getCurrentUser._id}`">
                 <v-list-item-content>
                   <v-list-item-title class="title">{{
-                    currentUser.channelName
+                    getCurrentUser.channelName
                   }}</v-list-item-title>
                   <v-list-item-subtitle>{{
-                    currentUser.email
+                    getCurrentUser.email
                   }}</v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
@@ -320,7 +320,7 @@
       settingsDialog: false
     }),
     computed: {
-      ...mapGetters(['currentUser', 'getUrl'])
+      ...mapGetters(['getCurrentUser', 'getUrl'])
     },
     methods: {
       search() {

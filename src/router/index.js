@@ -7,6 +7,7 @@ import UploadVideo from '../views/Singer/UploadVideo.vue'
 import DashBoard from '../views/Singer/DashBoard.vue'
 import IndexDashBoard from '../views/Singer/Index.vue'
 import SingerSignUp from '../views/Auth/SingerSignUp.vue'
+import WatchVideo from '../views/WatchVideo.vue'
 // import StudioNavBar from '../components/StudioNavBar.vue'
 Vue.use(VueRouter)
 
@@ -54,6 +55,11 @@ const routes = [
     path: '/uploadvideo',
     name: 'UploadVideo',
     component: UploadVideo
+  },
+  {
+    path: '/watch/:id',
+    name: 'WatchVideo',
+    component: WatchVideo
   }
 ]
 

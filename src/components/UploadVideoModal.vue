@@ -264,7 +264,7 @@
         const fd = new FormData();
      
         fd.append("url", this.selectedFile);
-        fd.append("singer_id", 1);
+        fd.append("singer_id", 2);
         let video = await VideoService.uploadVideo(fd, {
           onUploadProgress: (uploadEvent) => {
             this.value = Math.round(

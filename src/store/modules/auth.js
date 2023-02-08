@@ -11,6 +11,7 @@ const state = {
     age: null,
     avatarUrl: null
   },
+  base_url: "http://localhost:3000/"
 };
 const getters = {
   getAuthToken(state) {
@@ -29,6 +30,9 @@ const getters = {
   },
   getCurrentUser(state) {
     return state.user
+  },
+  getUrl(state) {
+    return state.base_url
   }
 };
 const actions = {

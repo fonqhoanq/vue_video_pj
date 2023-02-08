@@ -22,7 +22,7 @@
               ></v-img>
               <v-avatar v-else color="red">
                 <span class="white--text headline ">
-                  {{ channel.channel_name.split('')[0].toUpperCase() }}</span
+                  {{ channel.channelNname.split('')[0].toUpperCase() }}</span
                 >
               </v-avatar>
             </v-list-item-avatar>
@@ -37,11 +37,11 @@
           </v-card-title>
   
           <v-card-subtitle class="pl-2 pb-0">
-            {{ channel.channel_name }}
+            {{ video.singer.channelName }}
           </v-card-subtitle>
           <v-card-subtitle class="pl-2 pt-0">
             {{ video.views }} views<v-icon>mdi-circle-small</v-icon
-            >{{ dateFormatter(video.created_at) }}
+            >{{ dateFormatter(video.createdAt) }}
           </v-card-subtitle>
         </v-col>
       </v-row>
@@ -65,7 +65,7 @@
     },
     data() {
       return {
-        url: "http://localhost:3000/",
+        url: process.env.VUE_APP_URL,
         avatarURL: "https://www.hollywoodreporter.com/wp-content/uploads/2022/12/GettyImages-1448719385.jpg?w=1296"
       };
     },
