@@ -60,15 +60,15 @@
         <v-menu offset-y left>
           <template v-slot:activator="{ on }">
             <v-btn small color="red" depressed fab v-on="on" class="white--text">
-              <v-avatar v-if="getCurrentUser.photoUrl !== 'no-photo.jpg'">
+              <v-avatar v-if="getCurrentUser.avatarUrl !== 'no-photo.jpg'">
                 <img
-                  :src="`${getUrl}/uploads/avatars/${getCurrentUser.photoUrl}`"
-                  :alt="`${getCurrentUser.channelName} avatar`"
+                  :src="`${getUrl}${getCurrentUser.avatarUrl}`"
+                  :alt="`${getCurrentUser.username} avatar`"
                 />
               </v-avatar>
               <template v-else>
                 <span class="headline">
-                  {{ getCurrentUser.channelName.split('')[0].toUpperCase() }}
+                  {{ getCurrentUser.username.split('')[0].toUpperCase() }}
                 </span>
               </template>
             </v-btn>
@@ -78,17 +78,16 @@
             <v-list>
               <v-list-item>
                 <v-list-item-avatar>
-                  <v-avatar v-if="getCurrentUser.photoUrl !== 'no-photo.jpg'">
+                  <v-avatar v-if="getCurrentUser.avatarUrl !== 'no-photo.jpg'">
                     <img
-                      :src="`${getUrl}/uploads/avatars/${getCurrentUser.photoUrl}`"
-                      :alt="`${getCurrentUser.channelName} avatar`"
+                      :src="`${getUrl}${getCurrentUser.avatarUrl}`"
                     />
                   </v-avatar>
                   <template v-else>
                     <v-avatar color="red">
                       <span class="white--text headline ">
                         {{
-                          getCurrentUser.channelName.split('')[0].toUpperCase()
+                          getCurrentUser.username.split('')[0].toUpperCase()
                         }}</span
                       >
                     </v-avatar>
@@ -97,7 +96,7 @@
   
                 <v-list-item-content>
                   <v-list-item-title class="text-capitalize">{{
-                    getCurrentUser.channelName
+                    getCurrentUser.username
                   }}</v-list-item-title>
                   <v-list-item-subtitle>{{
                     getCurrentUser.email
@@ -205,20 +204,20 @@
                   <v-avatar
                     height="96"
                     width="96"
-                    v-if="getCurrentUser.photoUrl !== 'no-photo.jpg'"
+                    v-if="getCurrentUser.avatarUrl !== 'no-photo.jpg'"
                   >
-                    <!-- <img
-                      :src="`${getUrl}/uploads/avatars/${getCurrentUser.photoUrl}`"
-                      :alt="`${getCurrentUser.channelName} avatar`"
-                    /> -->
+                    <img
+                      :src="`${getUrl}${getCurrentUser.avatarUrl}`"
+                      :alt="`${getCurrentUser.username} avatar`"
+                    />
                   </v-avatar>
                   <!-- <template > -->
                   <span v-else class="display-3">
-                    {{ getCurrentUser.channelName.split('')[0].toUpperCase() }}
+                    {{ getCurrentUser.username.split('')[0].toUpperCase() }}
                   </span>
                   <!-- </template> -->
-                  <!-- <span class="display-3" v-if="getCurrentUser.photoUrl === 'no-photo.jpg'">
-                    {{ getCurrentUser.channelName.split('')[0].toUpperCase() }}
+                  <!-- <span class="display-3" v-if="getCurrentUser.avatarUrl === 'no-photo.jpg'">
+                    {{ getCurrentUser.username.split('')[0].toUpperCase() }}
                   </span> -->
                 </v-btn>
               </v-list-item>
@@ -226,7 +225,7 @@
               <v-list-item link :to="`/channels/${getCurrentUser._id}`">
                 <v-list-item-content>
                   <v-list-item-title class="title">{{
-                    getCurrentUser.channelName
+                    getCurrentUser.username
                   }}</v-list-item-title>
                   <v-list-item-subtitle>{{
                     getCurrentUser.email
@@ -241,6 +240,10 @@
         :open-dialog="dialog"
         v-on:closeDialog="dialog = false"
       />
+      <settings-modal
+      :open-dialog="settingsDialog"
+      v-on:closeDialog="settingsDialog = false"
+      />
     </nav>
   </template>
   
@@ -248,6 +251,7 @@
   import { mapGetters } from 'vuex'
   
   import UploadVideoModal from '@/components/UploadVideoModal'
+  import SettingsModal from '@/components/SettingsModal'
   export default {
     name: 'StudioNavBar',
     data: () => ({
@@ -335,7 +339,7 @@
       }
     },
     components: {
-      UploadVideoModal,
+      UploadVideoModal,SettingsModal
     },
     mounted() {
       this.drawer = this.$vuetify.breakpoint.mdAndDown ? false : true

@@ -1,17 +1,17 @@
 <template>
   <div>
-    <nav-bar/>
+    <studio-nav-bar/>
     <upload-modal/>
   </div>
 </template>
 <script>
-  import NavBar from '@/components/NavBar.vue'
+  import StudioNavBar from '@/components/StudioNavBar.vue'
   import UploadModal from '@/components/UploadVideoModal.vue'
 
   export default {
     name: 'UploadVideo',
     components: {
-        NavBar, UploadModal
+      StudioNavBar, UploadModal
     },
   }
 </script>

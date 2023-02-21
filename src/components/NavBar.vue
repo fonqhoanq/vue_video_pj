@@ -84,7 +84,7 @@
               </v-avatar>
               <v-avatar v-else>
                 <img
-                  :src="getCurrentUser.avatarUrl"
+                  :src="`${getUrl}${getCurrentUser.avatarUrl}`"
                 />
               </v-avatar>
               <!-- <template v-else>
@@ -101,7 +101,7 @@
                 <v-list-item-avatar>
                   <v-avatar>
                     <img
-                      :src="url"
+                    :src="`${getUrl}${getCurrentUser.avatarUrl}`"
                     />
                   </v-avatar>
                   <!-- <template v-else>
@@ -117,7 +117,7 @@
   
                 <v-list-item-content>
                   <v-list-item-title class="text-capitalize">{{
-                    getCurrentUser.name
+                    getCurrentUser.username
                   }}</v-list-item-title>
                   <v-list-item-subtitle>{{
                     getCurrentUser.email
@@ -480,7 +480,8 @@
     mounted() {
       // if (this.$route.query['search-query'])
       //   this.searchText = this.$route.query['search-query']
-  
+      console.log("mounted:")
+      console.log(this.getCurrentUser.avatarUrl)
       if (this.getCurrentUser) this.getSubscribedChannels()
       // this.user = this.$store.getters.getCurrentUser
       // console.log(this.user)

@@ -6,13 +6,13 @@
             <v-icon class="white--text">mdi-account</v-icon>
           </v-avatar>
           <v-img
-            v-else-if="getCurrentUser.photoUrl !== 'no-photo.jpg'"
-            :src="`${getUrl}/uploads/avatars/${getCurrentUser.photoUrl}`"
+            v-else-if="getCurrentUser.avatarUrl !== 'no-photo.jpg'"
+            :src="`${getUrl}${getCurrentUser.avatarUrl}`"
           ></v-img>
   
           <v-avatar v-else color="red">
             <span class="white--text headline ">
-              {{ getCurrentUser.channelName.split('')[0].toUpperCase() }}</span
+              {{ getCurrentUser.username.split('')[0].toUpperCase() }}</span
             >
           </v-avatar>
         </v-list-item-avatar>
@@ -46,7 +46,7 @@
   export default {
     props: {
       videoId: {
-        type: String,
+        type: Number,
         required: true
       }
     },
@@ -63,11 +63,12 @@
     methods: {
       async createComment() {
         if (this.comment === '') return
-  
+        console.log(this.getCurrentUser)
         this.loading = true
         const comment = await CommentService.createComment({
           text: this.comment,
-          videoId: this.videoId
+          video_id: this.videoId, 
+          user_id: this.getCurrentUser.id
         })
           .catch((err) => {
             console.log(err)
@@ -78,10 +79,10 @@
   
         if (!comment) return
         this.comment = ''
-        comment.data.data.replies = []
-        comment.data.data.userId = this.$store.getters.getCurrentUser
+        comment.data.replies = []
+        comment.data.userId = this.getCurrentUser.id
   
-        this.$store.dispatch('addComment', comment.data.data)
+        this.$store.dispatch('addComment', comment.data)
         this.$emit('videoCommentLength')
       },
       clickTextField() {
