@@ -219,7 +219,7 @@
                 </v-skeleton-loader>
   
                 <v-row>
-                  <v-col v-if="video && video.status === 'public'">
+                  <v-col v-if="video && video.public">
                     <p class="mb-0">{{ video.comments }} Comments</p>
   
                     <AddComment
@@ -461,7 +461,7 @@
         console.log(sub)
         if (!sub) return
   
-        if (!sub.data.status === 'unsubscribe') this.subscribed = false
+        if (sub.data.status === 'unsubscribe') this.subscribed = false
         else this.subscribed = true
       },
       async checkFeeling(id) {
@@ -549,7 +549,7 @@
         }
         this.subscribeLoading = true
         this.subscribed = !this.subscribed
-        const subType = this.subscribed ? 'subscribe' : 'unsubscribe'
+        const subType = this.subscribed === true ? 'subscribe' : 'unsubscribe'
         const sub = await SubscriptionService.createSubscription({
           singer_id: this.video.singer.id,
           user_id: this.getCurrentUser.id,

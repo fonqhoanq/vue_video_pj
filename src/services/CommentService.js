@@ -1,8 +1,12 @@
 import Api from '@/services/Api'
 
 export default {
-  getCommentByVideoId(filters) {
-    return Api().get(`comments/${filters}/videos`)
+  getCommentByVideoId(id) {
+    return Api().get(`comments/videos`, {
+      params: {
+        video_id: id
+      }
+    })
   },
   createComment(data) {
     return Api().post('comments', data)

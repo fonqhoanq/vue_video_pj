@@ -45,7 +45,7 @@ const routes = [
     component: IndexDashBoard,
     children: [
       {
-        path: '',
+        path: '/',
         name: 'DashBoard',
         component: DashBoard
       },

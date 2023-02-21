@@ -1,6 +1,6 @@
 <template>
     <div id="dashboard" class="pa-4">
-        <nav-bar/>
+        <studio-nav-bar/>
       <v-container fluid>
         <div class="d-flex justify-space-between mb-5">
           <h2>channel dashboard</h2>
@@ -42,7 +42,7 @@
   
   <script>
   import UploadModal from '@/components/UploadVideoModal.vue'
-  import NavBar from '@/components/NavBar.vue'
+  import StudioNavBar from '@/components/StudioNavBar.vue'
   export default {
     name: 'DashBoard',
     data: () => ({
@@ -51,7 +51,7 @@
       subscribersDialog: false
     }),
     components: {
-      UploadModal, NavBar
+      UploadModal, StudioNavBar
     },
     mounted() {}
   }

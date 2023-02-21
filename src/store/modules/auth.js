@@ -54,6 +54,8 @@ const actions = {
       axios
         .post(`${BASE_URL}users/sign_in`, payload)
         .then((response) => {
+          console.log("response:")
+          console.log(response)
           commit("setUserInfo", response);
           resolve(response);
         })
@@ -98,10 +100,23 @@ const actions = {
         });
     });
   },
+  updateUserInfor(context, payload ) {
+    context.commit("setUserInfors", payload);
+  }
 };
 const mutations = {
+  setUserInfors(state, data) {
+    state.user = data
+  },
   setUserInfo(state, data) {
-    state.user = data.data.user;
+    state.user = {
+      id: data.data.id,
+      username: data.data.username,
+      email: data.data.email,
+      age: data.data.age,
+      avatarUrl: data.data.avatarUrl
+    }
+    console.log("state user")
     console.log(state.user)
     state.auth_token = data.headers.authorization;
     axios.defaults.headers.common["Authorization"] = data.headers.authorization;
@@ -116,6 +131,8 @@ const mutations = {
       id: null,
       username: null,
       email: null,
+      avatarUrl: null,
+      age: null
     };
     state.auth_token = null;
     localStorage.removeItem("auth_token");
