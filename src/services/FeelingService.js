@@ -7,12 +7,7 @@ export default {
   createFeeling(data) {
     return Api().post('feelings', data)
   },
-  getLikedVideos(page) {
-    return Api().get('feelings/videos', {
-      params: {
-        page,
-        limit: 12
-      }
-    })
+  getLikedVideos(params) {
+    return Api().get('feelings/like_videos', { params: params })
   }
 }
