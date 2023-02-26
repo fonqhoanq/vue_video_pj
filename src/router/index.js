@@ -9,6 +9,7 @@ import IndexDashBoard from '../views/Singer/Index.vue'
 import SingerSignUp from '../views/Auth/SingerSignUp.vue'
 import WatchVideo from '../views/WatchVideo.vue'
 import HistoryVideo from '../views/HistoryVideo.vue'
+import LikedVideos from '../views/LikedVideo.vue'
 // import StudioNavBar from '../components/StudioNavBar.vue'
 Vue.use(VueRouter)
 
@@ -66,6 +67,11 @@ const routes = [
     path: '/history',
     name: 'HistoryVideo',
     component: HistoryVideo
+  },
+  {
+    path: '/liked-videos',
+    name: 'LikedVideos',
+    component: LikedVideos
   }
 ]
 
