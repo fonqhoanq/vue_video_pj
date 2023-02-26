@@ -344,7 +344,7 @@
   import VideoService from '@/services/VideoService'
   import SubscriptionService from '@/services/SubscriptionService'
   import FeelingService from '@/services/FeelingService'
-  // import HistoryService from '@/services/HistoryService'
+  import HistoryService from '@/services/HistoryService'
   
   import SigninModal from '@/components/SigninModal'
   import AddComment from '@/components/comments/AddComment'
@@ -408,12 +408,13 @@
         // )
         //   return this.$router.push('/')
   
-        // const data = {
-        //   type: 'watch',
-        //   videoId: this.video.id
-        // }
+        const data = {
+          history_type: 'watch',
+          video_id: this.video.id,
+          user_id: this.getCurrentUser.id
+        }
   
-        // await HistoryService.createHistory(data).catch((err) => console.log(err))
+        await HistoryService.createHistory(data).catch((err) => console.log(err))
       },
       async getVideos($state) {
         this.errored = false

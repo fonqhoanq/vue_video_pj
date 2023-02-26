@@ -382,8 +382,8 @@
               float: none;
             }
             & * {
-              // margin-left: auto;
-              // margin-right: auto;
+              margin-left: auto;
+              margin-right: auto;
             }
           }
         }
