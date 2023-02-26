@@ -8,6 +8,7 @@ import DashBoard from '../views/Singer/DashBoard.vue'
 import IndexDashBoard from '../views/Singer/Index.vue'
 import SingerSignUp from '../views/Auth/SingerSignUp.vue'
 import WatchVideo from '../views/WatchVideo.vue'
+import HistoryVideo from '../views/HistoryVideo.vue'
 // import StudioNavBar from '../components/StudioNavBar.vue'
 Vue.use(VueRouter)
 
@@ -60,6 +61,11 @@ const routes = [
     path: '/watch/:id',
     name: 'WatchVideo',
     component: WatchVideo
+  },
+  {
+    path: '/history',
+    name: 'HistoryVideo',
+    component: HistoryVideo
   }
 ]
 
