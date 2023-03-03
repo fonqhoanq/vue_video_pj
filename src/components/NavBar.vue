@@ -430,8 +430,9 @@
         if (this.searchText == this.$route.query['search-query']) return
         // this.searchText = this.$route.query['search-query']
         const data = {
-          type: 'search',
-          searchText: this.searchText
+          history_type: 'search',
+          search_text: this.searchText,
+          user_id: this.getCurrentUser.id
         }
   
         if (this.isLoggedIn)
