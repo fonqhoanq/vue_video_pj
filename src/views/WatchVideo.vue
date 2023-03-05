@@ -107,10 +107,8 @@
                               size="50"
                             >
                               <img
-                                v-if="video.singer.photoUrl !== 'no-photo.jpg'"
-                                :src="
-                                  `${avatarURL}`
-                                "
+                                v-if="video.singer.avatarUrl !== 'no-photo.jpg'"
+                                :src="`${getUrl}${video.singer.avatarUrl}`"
                                 :alt="`${video.singer.channelName} avatar`"
                               />
                               <v-avatar v-else color="red">

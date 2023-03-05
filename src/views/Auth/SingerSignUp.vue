@@ -279,7 +279,7 @@
         this.loading = true
   
         const data = await this.$store
-          .dispatch('singerSignUp', {
+          .dispatch('registerSinger', {
             singer: {
               name: this.name,
               email: this.email,
@@ -315,7 +315,7 @@
   
         // if (!user) return
         // this.loading = false
-        this.$router.push({ name: 'Home' })
+        this.$router.push({ name: 'DashBoard' })
       }
     }
   }

@@ -4,13 +4,15 @@ import VueRouter from 'vue-router'
 import SignIn from '../views/Auth/SignIn.vue'
 import SignUp from '../views/Auth/SignUp.vue'
 import UploadVideo from '../views/Singer/UploadVideo.vue'
-import DashBoard from '../views/Singer/DashBoard.vue'
+import SingerDashBoard from '../views/Singer/DashBoard.vue'
 import IndexDashBoard from '../views/Singer/Index.vue'
 import SingerSignUp from '../views/Auth/SingerSignUp.vue'
 import WatchVideo from '../views/WatchVideo.vue'
 import HistoryVideo from '../views/HistoryVideo.vue'
 import LikedVideos from '../views/LikedVideo.vue'
 import SearchVideos from '../views/SearchVideo.vue'
+import SingerSignIn from '../views/Auth/SingerSignIn.vue'
+import DashBoard from '../views/DashBoard.vue'
 // import StudioNavBar from '../components/StudioNavBar.vue'
 Vue.use(VueRouter)
 
@@ -42,6 +44,16 @@ const routes = [
     path: '/singer/signup',
     name: 'SingerSignUp',
     component: SingerSignUp
+  },
+  {
+    path: '/singer/signin',
+    name: 'SingerSignIn',
+    component: SingerSignIn
+  },
+  {
+    path: '/singer/studio',
+    name: 'SingerStudio',
+    component: SingerDashBoard
   },
   {
     path: '/studio',

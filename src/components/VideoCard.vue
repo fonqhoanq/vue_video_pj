@@ -18,11 +18,11 @@
               <v-img
                 v-if="channel.photoUrl !== 'no-photo.jpg'"
                 class="elevation-6"
-                :src="`${avatarURL}`"
+                :src="`${getUrl}${channel.avatarUrl}`"
               ></v-img>
               <v-avatar v-else color="red">
                 <span class="white--text headline ">
-                  {{ channel.channelNname.split('')[0].toUpperCase() }}</span
+                  {{ channel.channelName.split('')[0].toUpperCase() }}</span
                 >
               </v-avatar>
             </v-list-item-avatar>
@@ -50,6 +50,7 @@
   
   <script>
   import moment from "moment";
+  import { mapGetters } from 'vuex'
   export default {
     name: "VideoCard",
     props: {
@@ -68,6 +69,9 @@
         url: process.env.VUE_APP_URL,
         avatarURL: "https://www.hollywoodreporter.com/wp-content/uploads/2022/12/GettyImages-1448719385.jpg?w=1296"
       };
+    },
+    computed: {
+      ...mapGetters(['getCurrentUser', 'getUrl'])
     },
     methods: {
       dateFormatter(date) {
