@@ -42,9 +42,9 @@
   
   <script>
   import UploadModal from '@/components/UploadVideoModal.vue'
-  import StudioNavBar from '@/components/Singers/StudioNavBar.vue'
+  import StudioNavBar from '@/components/StudioNavBar.vue'
   export default {
-    name: 'SingerDashBoard',
+    name: 'DashBoard',
     data: () => ({
       loading: true,
       dialog: false,

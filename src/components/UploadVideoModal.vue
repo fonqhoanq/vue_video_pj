@@ -214,6 +214,7 @@
   <script>
   import myUpload from "/home/dell/vue_video_pj/node_modules/vue-image-crop-upload/upload-2.vue";
   import VideoService from "@/services/VideoService";
+  import { mapGetters } from 'vuex'
   // import CategoryService from "@/services/CategoryService";
   export default {
     name: "UploadModal",
@@ -251,6 +252,7 @@
       };
     },
     computed: {
+      ...mapGetters(['getCurrentSinger', 'getUrl']),
       dialog() {
         return this.openDialog;
       },
@@ -264,7 +266,7 @@
         const fd = new FormData();
      
         fd.append("url", this.selectedFile);
-        fd.append("singer_id", 3);
+        fd.append("singer_id", this.getCurrentSinger.id);
         let video = await VideoService.uploadVideo(fd, {
           onUploadProgress: (uploadEvent) => {
             this.value = Math.round(
