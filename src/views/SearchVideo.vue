@@ -34,7 +34,58 @@
                 tile
                 large
               >
-               
+                <v-card
+                  :to="`/channels/${result._id}`"
+                  class="card mb-10"
+                  v-if="typeof result.channelName !== 'undefined'"
+                  tile
+                  flat
+                >
+                  <v-row no-gutters justify="center">
+                    <v-col cols="10" sm="10" md="3" lg="3" class="d-flex">
+                      <!-- <v-responsive max-height="100%"> -->
+  
+                      <v-avatar size="120" max-width="150" class="mx-auto red">
+                        <img
+                          v-if="result.avatarUrl !== 'no-photo.jpg'"
+                          :src="`${getUrl}${result.avatarUrl}`"
+                          :alt="`${result.channelName} avatar`"
+                        />
+                      </v-avatar>
+                      <!-- </v-responsive> -->
+                    </v-col>
+                    <v-col cols="10" sm="10" md="6" lg="6" class="justify-center">
+                      <!-- <div class="ml-2"> -->
+                      <v-card-title
+                        class="pl-2 pt-0 subtitle-1 font-weight-bold align-center"
+                      >
+                        {{ result.channelName }}
+                      </v-card-title>
+  
+                      <v-card-subtitle
+                        class="pl-2 pt-2 pb-0"
+                        style="line-height: 1.2"
+                      >
+                        {{ result.subscribers }}
+                        subscribers<v-icon>mdi-circle-small</v-icon
+                        >{{ result.videos }} videos
+                      </v-card-subtitle>
+                      <v-card-subtitle class="pl-2 pt-2 pb-0">
+                        {{ result.description }}
+                      </v-card-subtitle>
+                      <!-- </div> -->
+                    </v-col>
+  
+                    <!-- <v-col cols="10" sm="10" md="3" lg="3">
+                      <v-btn class="red white--text mt-6" tile depressed
+                        >Subscribed</v-btn
+                      >
+                      <v-btn icon class="ml-5 mt-6"
+                        ><v-icon>mdi-bell</v-icon></v-btn
+                      >
+                    </v-col> -->
+                  </v-row>
+                </v-card>
                 <v-card
                   :to="`/watch/${result.id}`"
                   class="card mb-10"
@@ -44,7 +95,7 @@
                   <v-row no-gutters v-if="result.singer">
                     <v-col cols="5" sm="3" md="3" lg="3">
                       <v-img
-                        class="align-center"
+                        class="align-center cardVideo"
                         :src="
                           `${getUrl}${result.thumbnails}`
                         "
@@ -139,8 +190,9 @@
         }
         const params = {
           page: this.page,
-        //   user_id: this.getCurrentUser.id
+          user_id: this.getCurrentUser.id,
           text: this.text,
+          video_id: 0
         }
         const results = await SearchService.search(params)
           .catch((err) => {
@@ -188,7 +240,11 @@
       this.text = this.$route.query['search-query']
     }
   }
-  </script>
+</script>
   
-  <style></style>
+<style lang="scss">
+ .cardVideo {
+    border-radius: 10px;
+  }
+</style>
   

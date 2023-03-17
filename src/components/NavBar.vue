@@ -63,6 +63,7 @@
           <span>Notifications</span>
         </v-tooltip> -->
         <v-btn
+         id="signInBtn"
           tile
           outlined
           color="blue"
@@ -504,6 +505,9 @@
   <style lang="scss">
   .v-list-item__avatar {
     justify-content: center !important;
+  }
+  #signInBtn {
+    border-radius: 5px;
   }
   #showBtn {
     .v-btn__content {

@@ -26,6 +26,7 @@
           <div v-if="showCommentBtns" class="d-inline-block text-right">
             <v-btn text @click="showCommentBtns = !showCommentBtns">Cancel</v-btn>
             <v-btn
+              id="commentBtn"
               class="blue darken-3 white--text"
               depressed
               tile
@@ -93,5 +94,9 @@
   }
   </script>
   
-  <style></style>
+<style lang="scss">
+#commentBtn {
+  border-radius: 5px;
+}
+</style>
   

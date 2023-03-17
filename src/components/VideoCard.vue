@@ -1,6 +1,6 @@
 <template>
     <v-card
-      class="content-bg card mx-auto"
+      class="content-bg card mx-auto card-action"
       :max-width="card.maxWidth"
       flat
       tile
@@ -8,6 +8,7 @@
       :to="`/watch/${video.id}`"
     >
       <v-img
+        class="img-video"
         :src="`${url}${video.thumbnails}`"
   
       ></v-img>
@@ -79,7 +80,24 @@
       },
     },
   };
-  </script>
+</script>
   
-  <style></style>
+<style lang="scss">
+.card-action {
+  transition: transform .5s;
+  border-radius: 10px 10px 10px 10px !important;
+  padding-top: 15px;
+  border: 1px;
+}
+.card-action:hover {
+  transition: transform .5s;
+  transform: scale(1.15);
+  transition-delay: 0.5s;
+
+}
+.img-video {
+  border: 1px;
+  border-radius: 10px 10px 10px 10px !important;
+}
+</style>
   

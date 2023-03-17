@@ -152,6 +152,7 @@
                               },
                               'mt-6'
                             ]"
+                            id="subscribeBtn"
                             tile
                             large
                             depressed
@@ -259,7 +260,7 @@
                         <v-col class="mx-auto" cols="12" sm="12" md="5" lg="5">
                           <!-- <v-responsive max-height="100%"> -->
                           <v-img
-                            class="align-center"
+                            class="align-center cardVideo"
                             height="110"
                             :src="
                               `${url}${video.thumbnails}`
@@ -643,12 +644,17 @@
   #btns {
     border-bottom: 1px solid #e0d8d8;
   }
-  
+  #subscribeBtn {
+    border-radius: 5px;
+  }
   button.v-btn.remove-hover-bg {
     background-color: initial !important;
     &:hover {
       background-color: #f9f9f9;
     }
+  }
+  .cardVideo {
+    border-radius: 5px;
   }
   </style>
   

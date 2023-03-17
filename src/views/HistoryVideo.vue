@@ -51,7 +51,7 @@
                             >
                               {{ history.video.title }}
   
-                              <v-btn text @click="deleteHistory(history._id)">
+                              <v-btn text @click="deleteHistory(history.id)">
                                 <v-icon>mdi-close</v-icon>
                               </v-btn>
                             </v-card-title>
@@ -132,7 +132,7 @@
                           text
                           class="grey--text"
                           fab
-                          @click="deleteHistory(history._id)"
+                          @click="deleteHistory(history.id)"
                         >
                           <v-icon>mdi-close</v-icon>
                         </v-btn></v-card-actions
@@ -282,7 +282,8 @@
             this.loading = false
           })
         if (!histories) return
-  
+        console.log('history')
+        console.log(histories)
         if (histories.data.length) {
           this.page += 1
   
@@ -319,7 +320,7 @@
       },
       async deleteHistory(id) {
         this.histories = this.histories.filter(
-          (history) => history._id.toString() !== id.toString()
+          (history) => history.id.toString() !== id.toString()
         )
         await HistoryService.deleteById(id)
           .catch((err) => {
