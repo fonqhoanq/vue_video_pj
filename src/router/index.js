@@ -13,6 +13,7 @@ import LikedVideos from '../views/LikedVideo.vue'
 import SearchVideos from '../views/SearchVideo.vue'
 import SingerSignIn from '../views/Auth/SingerSignIn.vue'
 import DashBoard from '../views/DashBoard.vue'
+import ChannelHome from '../views/Channel/ChannelHome.vue'
 // import StudioNavBar from '../components/StudioNavBar.vue'
 Vue.use(VueRouter)
 
@@ -75,6 +76,11 @@ const routes = [
     path: '/watch/:id',
     name: 'WatchVideo',
     component: WatchVideo
+  },
+  {
+    path: '/channels/:id',
+    name: ChannelHome,
+    component: ChannelHome
   },
   {
     path: '/history',

@@ -191,7 +191,7 @@
                 class="mb-0"
                 :to="
                   parentItem.header === 'Subscriptions'
-                    ? '/channels/' + item.channelId._id
+                    ? '/channels/' + item.id
                     : item.link
                 "
                 exact
@@ -204,21 +204,20 @@
                   {{ i }}
                   <v-avatar
                     v-if="
-                      item.channelId.photoUrl !== 'no-photo.jpg' && item.channelId
+                      item.avatarUrl !== 'no-photo.jpg' && item
                     "
                   >
                     <img
                       :src="
-                        `${getUrl}/uploads/avatars/${item.channelId.photoUrl}`
+                        `${getUrl}${item.avatarUrl}`
                       "
-                      :alt="`${item.channelId.channelName} avatar`"
                     />
                   </v-avatar>
                   <template v-else>
                     <v-avatar color="red">
                       <span class="white--text headline ">
                         {{
-                          item.channelId.channelName.split('')[0].toUpperCase()
+                          item.channelName.split('')[0].toUpperCase()
                         }}</span
                       >
                     </v-avatar>
@@ -227,7 +226,7 @@
                 <v-list-item-content>
                   <v-list-item-title class=" font-weight-medium subtitle-2">{{
                     parentItem.header === 'Subscriptions'
-                      ? item.channelId.channelName
+                      ? item.channelName
                       : item.title
                   }}</v-list-item-title>
                 </v-list-item-content>
@@ -239,7 +238,7 @@
                 v-if="
                   parentItem.header === 'Subscriptions' &&
                     isLoggedIn &&
-                    items[2].length > 0
+                    items[2].pages.length > 0
                 "
                 block
                 text
@@ -433,7 +432,7 @@
         const data = {
           history_type: 'search',
           search_text: this.searchText,
-          user_id: this.getCurrentUser.id
+          userid: this.getCurrentUser.id
         }
   
         if (this.isLoggedIn)
@@ -447,10 +446,14 @@
         })
       },
       async getSubscribedChannels() {
+        const params = {
+          user_id: this.getCurrentUser.id
+        }
         const channels = await SubscriptionService.getSubscribedChannels(
-          this.getCurrentUser.id
+          params
         ).catch((err) => console.log(err))
         this.items[2].pages = channels.data
+        console.log(this.items[2].pages.length)
         this.channelLength = 3
       },
       moreChannels() {
