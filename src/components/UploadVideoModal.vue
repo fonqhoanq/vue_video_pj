@@ -324,7 +324,8 @@
         this.selectedFile = [];
         this.closeModal();
   
-        this.$router.push("/studio");
+        // this.$router.push("/studio");
+        this.$router.push({ name: 'SingerStudio' });
       },
       // async getCategories() {
       //   this.categoryLoading = true;

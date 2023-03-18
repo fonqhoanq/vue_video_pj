@@ -561,13 +561,13 @@
           })
   
         if (!sub) return
-        // if (!sub.data.data.id) {
-        //   this.subscribed = false
-        //   this.video.singer.subscribers--
-        // } else {
-        //   this.subscribed = true
-        //   this.video.singer.subscribers++
-        // }
+        if (sub.data.status === 'unsubscribe') {
+          this.subscribed = false
+          this.video.singer.subscribers--
+        } else {
+          this.subscribed = true
+          this.video.singer.subscribers++
+        }
       },
       async updateViews(id) {
         const views = await VideoService.updateViews(id).catch((err) => {

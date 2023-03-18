@@ -6,6 +6,11 @@ export default {
       params
     })
   },
+  getBySingerId(data, params) {
+    return Api().get(`videos/singer/${data}`, {
+      params
+    })
+  },
   getById(id) {
     return Api().get(`videos/${id}`)
   },
