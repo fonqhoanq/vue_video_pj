@@ -19,10 +19,11 @@ export default {
   createSubscription(data) {
     return Api().post('subscribes', data)
   },
-  getSubscribedVideos(page) {
+  getSubscribedVideos(id, page) {
     return Api().get('subscribes/videos', {
       params: {
-        page,
+        user_id: id,
+        page: page,
         limit: 12
       }
     })
