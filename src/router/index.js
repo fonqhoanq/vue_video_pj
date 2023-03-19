@@ -14,6 +14,8 @@ import SearchVideos from '../views/SearchVideo.vue'
 import SingerSignIn from '../views/Auth/SingerSignIn.vue'
 import DashBoard from '../views/DashBoard.vue'
 import ChannelHome from '../views/Channel/ChannelHome.vue'
+import TrendingVideos from '../views/TrendingVideo.vue'
+import SubscribedVideos from '../views/SubscribedVideo.vue'
 // import StudioNavBar from '../components/StudioNavBar.vue'
 Vue.use(VueRouter)
 
@@ -96,6 +98,16 @@ const routes = [
     path: '/search',
     name: 'Search',
     component: SearchVideos
+  },
+  {
+    path: '/trending',
+    name: 'TrendingVideos',
+    component: TrendingVideos
+  },
+  {
+    path: '/subscriptions',
+    name: SubscribedVideos,
+    component: SubscribedVideos
   }
 ]
 

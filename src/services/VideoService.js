@@ -11,6 +11,11 @@ export default {
       params
     })
   },
+  getTrendingVideo(params) {
+    return Api().get('videos/trending', {
+      params
+    })
+  },
   getById(id) {
     return Api().get(`videos/${id}`)
   },
