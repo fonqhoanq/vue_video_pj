@@ -215,7 +215,7 @@
           personalInfo: false,
           password: false
         },
-        imgDataUrl: ``,
+        imgDataUrl: `${this.$store.getters.getUrl}${this.$store.getters.getCurrentUser.avatarUrl}`,
         url: `http://127.0.0.1:3000/users/${this.$store.getters.getCurrentUser.id}/avatar`,
         headers: { Authorization: `Bearer ${this.$store.getters.getToken}` }
       }
@@ -324,9 +324,11 @@
       cropUploadSuccess(jsonData, field) {
         console.log('-------- upload success --------')
         const user = this.$store.getters.getCurrentUser
-        console.log("jsonData")
-        console.log(jsonData.data)
-        user.avatarUrl = jsonData.data.avatarUrl
+        var avatar = ''
+        if (jsonData.avatarUrl.includes('http://127.0.0.1:3000/')) {
+          avatar = jsonData.avatarUrl.replace('http://127.0.0.1:3000/', '')
+        }
+        user.avatarUrl = avatar
         this.$store.dispatch('updateUserInfor', user)
         console.log('field: ' + field)
       },

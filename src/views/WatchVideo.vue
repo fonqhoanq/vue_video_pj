@@ -332,6 +332,9 @@
         :details="details"
         @closeModal="signinDialog = false"
       />
+      <v-snackbar  :timeout="timeout" v-model="snackbar">
+        {{ subscribeMessage }}
+      </v-snackbar>
     </div>
   </template>
   
@@ -351,6 +354,9 @@
   import NavBar from '@/components/NavBar'
   export default {
     data: () => ({
+      subscribeMessage: '',
+      snackbar: false,
+      timeout: 4000,
       loading: false,
       loaded: false,
       errored: false,
@@ -558,6 +564,8 @@
           .catch((err) => console.log(err))
           .finally(() => {
             this.subscribeLoading = false
+            this.subscribeMessage = subType === 'subscribe' ? 'Subscribe successfully!' : 'Ubsubscribe successfully!'
+            this.snackbar = true
           })
   
         if (!sub) return

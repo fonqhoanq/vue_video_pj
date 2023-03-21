@@ -36,7 +36,11 @@
       <upload-modal
         :open-dialog="dialog"
         v-on:closeDialog="dialog = false"
+        v-on:openSnackbar=" snackbar = true"
       />
+      <v-snackbar  :timeout="timeout" v-model="snackbar">
+        {{ uploadMessage }}
+      </v-snackbar>
     </div>
   </template>
   
@@ -46,6 +50,9 @@
   export default {
     name: 'SingerDashBoard',
     data: () => ({
+      uploadMessage: 'Upload video successfully!',
+      timeout: 4000,
+      snackbar: false,
       loading: true,
       dialog: false,
       subscribersDialog: false

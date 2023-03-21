@@ -215,7 +215,7 @@
           personalInfo: false,
           password: false
         },
-        imgDataUrl: ``,
+        imgDataUrl: `${this.$store.getters.getUrl}${this.$store.getters.getCurrentSinger.avatarUrl}`,
         url: `http://127.0.0.1:3000/singers/${this.$store.getters.getCurrentSinger.id}/avatar`,
         headers: { Authorization: `Bearer ${this.$store.getters.getToken}` }
       }
@@ -325,8 +325,11 @@
         console.log('-------- upload success --------')
         const singer = this.$store.getters.getCurrentSinger
         console.log("jsonData")
-        console.log(jsonData.data)
-        singer.avatarUrl = jsonData.data.avatarUrl
+        var avatar = ''
+        if (jsonData.avatarUrl.includes('http://127.0.0.1:3000/')) {
+          avatar = jsonData.avatarUrl.replace('http://127.0.0.1:3000/', '')
+        }
+        singer.avatarUrl = avatar
         this.$store.dispatch('updateSingerInfor', singer)
         console.log('field: ' + field)
       },
