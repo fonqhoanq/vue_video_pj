@@ -260,10 +260,10 @@
         {
           header: 'scroll',
           pages: [
-            { title: 'Dashboard', link: '/studio', icon: 'mdi-view-dashboard' },
+            { title: 'Dashboard', link: '/singer/studio', icon: 'mdi-view-dashboard' },
             {
               title: 'Videos',
-              link: '/studio/videos',
+              link: '/singer/videos',
               icon: 'mdi-play-box-multiple'
             }
             // {

@@ -108,7 +108,7 @@ export default {
         })
 
       if (typeof videos === 'undefined') return
-
+      console.log(videos)
       if (videos.data.length) {
         this.page += 1
         this.videos.push(...videos.data)
@@ -128,7 +128,7 @@ export default {
     NavBar
   },
   mounted() {
-    this.getVideos()
+    // this.getVideos()
   }
 }
 </script>
