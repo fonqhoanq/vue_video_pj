@@ -1,6 +1,6 @@
 <template>
     <div id="dashboard" class="pa-4">
-        <studio-nav-bar/>
+      <studio-nav-bar/>
       <v-container fluid>
         <div class="d-flex justify-space-between mb-5">
           <h2>channel dashboard</h2>
