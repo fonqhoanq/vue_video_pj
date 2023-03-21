@@ -235,8 +235,8 @@
             value.size > 5000000 ||
             `Video size should be less than 15 MB!, ${value.size}`,
         ],
-        categoriesTitles: ["Pop", "Rock"],
-        categories: ["Pop", "Rock"],
+        categoriesTitles: ["Pop", "Rock", "Country Music", "Electronic", "Funk", "Hip hop", "Jazz", "Latin", "Soul", "R&B"],
+        categories: ["Pop", "Rock", "Country Music", "Electronic", "Funk", "Hip hop", "Jazz", "Latin", "Soul", "R&B"],
         visibilty: ["Private", "Public"],
         selectedFile: [],
         formData: {
@@ -316,16 +316,20 @@
           .finally(() => {
             this.submitLoading = false;
             this.uploaded = false;
+            this.$emit("openSnackbar");
           });
   
         if (!video) return;
+        this.formData.title = '';
+        this.formData.description = '';
+        this.formData.category = '';
         this.formData.visibilty = "";
         this.imgDataUrl = "";
         this.selectedFile = [];
         this.closeModal();
   
         // this.$router.push("/studio");
-        this.$router.push({ name: 'SingerStudio' });
+        // this.$router.push({ name: 'SingerStudio' });
       },
       // async getCategories() {
       //   this.categoryLoading = true;

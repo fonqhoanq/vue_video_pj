@@ -106,7 +106,13 @@ const actions = {
 };
 const mutations = {
   setUserInfors(state, data) {
-    state.user = data
+    state.user = {
+      id: data.id,
+      username: data.username,
+      email: data.email,
+      age: data.age,
+      avatarUrl: data.avatarUrl
+    }
   },
   setUserInfo(state, data) {
     state.user = {

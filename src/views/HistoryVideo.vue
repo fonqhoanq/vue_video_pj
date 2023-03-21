@@ -226,7 +226,7 @@
           </v-col>
         </v-row>
       </v-container>
-      <v-snackbar v-model="snackbar">
+      <v-snackbar  :timeout="timeout" v-model="snackbar">
         {{ deleteMessage }}
         <v-btn color="white" text @click="snackbar = false" icon>
           <v-icon>mdi-close-circle</v-icon>
@@ -249,6 +249,7 @@
       loaded: false,
       errored: false,
       snackbar: false,
+      timeout: 4000,
       deleteMessage: '',
       items: ['Watch History', 'Search History'],
       historyType: 'Watch History',
