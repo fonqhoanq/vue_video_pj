@@ -206,7 +206,7 @@ export default {
       this.videos = videos.data;
     },
     editItem(item) {
-      this.$router.push({ name: `Detail`, params: { id: item.id } });
+      this.$router.push({ name: `DetailsVideo`, params: { id: item.id } });
     },
     deleteBtn(item) {
       this.dialogDelete = true;
