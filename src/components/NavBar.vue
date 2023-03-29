@@ -18,7 +18,23 @@
           v-model="searchText"
           @click:append="search"
         ></v-text-field>
-  
+        <!-- <ais-instant-search>
+          <ais-voice-search>
+            <template v-slot="{
+      isBrowserSupported,
+      isListening,
+      toggleListening,
+      voiceListeningState,
+  }">
+    <button @click="toggleListening">click</button>
+    <p>isListening: {{ isListening ? 'true' : 'false' }}</p>
+    <p>isBrowserSupported: {{ isBrowserSupported ? 'true' : 'false' }}</p>
+    <pre>voiceListeningState: {{
+      JSON.stringify(voiceListeningState, null, 2)
+    }}</pre>
+  </template>
+          </ais-voice-search>>
+        </ais-instant-search> -->
         <v-spacer></v-spacer>
   
         <v-menu offsetY>
@@ -282,8 +298,13 @@
   import { mapGetters } from 'vuex'
   import SubscriptionService from '@/services/SubscriptionService'
   import HistoryService from '@/services/HistoryService'
-  
+  // import { AisVoiceSearch, AisInstantSearch } from 'vue-instantsearch';
+
   export default {
+    // components: {
+    //   AisVoiceSearch,
+    //   AisInstantSearch
+    // },
     data: () => ({
       url: "https://cdn-icons-png.flaticon.com/512/219/219988.png",
       drawer: true,

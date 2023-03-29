@@ -35,7 +35,7 @@
                 large
               >
                 <v-card
-                  :to="`/channels/${result._id}`"
+                  :to="`/channels/${result.id}`"
                   class="card mb-10"
                   v-if="typeof result.channelName !== 'undefined'"
                   tile
@@ -190,9 +190,9 @@
         }
         const params = {
           page: this.page,
-          user_id: this.getCurrentUser.id,
+          // user_id: this.getCurrentUser.id,
           text: this.text,
-          video_id: 0
+          // video_id: 0
         }
         const results = await SearchService.search(params)
           .catch((err) => {
