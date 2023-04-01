@@ -6,10 +6,10 @@ export default {
       params: data
     })
   },
-  getSubscribers(limit) {
+  getSubscribers(id) {
     return Api().get('subscribes/subscribers', {
       params: {
-        limit
+        singer_id: id
       }
     })
   },

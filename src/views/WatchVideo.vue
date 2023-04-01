@@ -236,91 +236,113 @@
               <v-col cols="12" sm="12" md="4" lg="4">
                 <hr class="grey--text" />
                 <h4 class="mb-3 mt-3">Up next</h4>
-                <div
-                  v-for="(video, i) in loading ? 12 : videos"
-                  :key="i"
-                  class="mb-5"
+                <v-tabs
+                  class="mb-3 mt-3"
+                  v-model="tab"
+                  background-color="transparent"
+                  show-arrows
+                  centered
+                  center-active
                 >
-                  <v-skeleton-loader
-                    class="mx-auto"
-                    type="list-item-avatar-three-line"
-                    :loading="loading"
-                    tile
-                    large
-                  >
-                    <v-card
-                      class="card"
-                      tile
-                      flat
-                      v-if="!loading"
-                      router
-                      :to="`/watch/${video.id}`"
+                  <v-tab v-for="(item, i) in items" :key="i">
+                    {{ item }}
+                  </v-tab>
+                </v-tabs>
+                <v-tabs-items v-model="tab" class="transparent">
+                  <v-tab-item>
+                     <v-slide-item
+                      v-for="(video, i) in loading ? 12 : videos"
+                      :key="i"
+                      class="mb-5"
                     >
-                      <v-row no-gutters>
-                        <v-col class="mx-auto" cols="12" sm="12" md="5" lg="5">
-                          <!-- <v-responsive max-height="100%"> -->
-                          <v-img
-                            class="align-center cardVideo"
-                            height="110"
-                            :src="
-                              `${url}${video.thumbnails}`
-                            "
-                          >
-                          </v-img>
-                          <!-- </v-responsive> -->
-                        </v-col>
-                        <v-col>
-                          <div class="ml-2">
-                            <v-card-title
-                              class="pl-2 pt-0 subtitle-1 font-weight-bold"
-                              style="line-height: 1"
-                            >
-                              {{ video.title }}
-                            </v-card-title>
-  
-                            <v-card-subtitle
-                              class="pl-2 pt-2 pb-0"
-                              style="line-height: 1"
-                            >
-                              {{ video.singer.channelName }}<br />
-                              {{ video.views }} views<v-icon
-                                >mdi-circle-small</v-icon
-                              >
-                              {{ dateFormatter(video.createdAt) }}
-                            </v-card-subtitle>
-                          </div>
-                        </v-col>
-                      </v-row>
-                    </v-card>
-                  </v-skeleton-loader>
-                </div>
+                      <v-skeleton-loader
+                        class="mx-auto"
+                        type="list-item-avatar-three-line"
+                        :loading="loading"
+                        tile
+                        large
+                      >
+                        <recommend-video-card
+                          :video="video"
+                        ></recommend-video-card>
+                      </v-skeleton-loader>
+                    </v-slide-item>
+                    <infinite-loading :identifier="infiniteId" @infinite="getVideos">
+                      <div slot="spinner">
+                        <v-progress-circular
+                          indeterminate
+                          color="red"
+                        ></v-progress-circular>
+                      </div>
+                      <div slot="no-results"></div>
+                      <span slot="no-more"></span>
+                      <div slot="error" slot-scope="{ trigger }">
+                        <v-alert prominent type="error">
+                          <v-row align="center">
+                            <v-col class="grow">
+                              <div class="title">Error!</div>
+                              <div>
+                                Something went wrong, but don’t fret — let’s give it
+                                another shot.
+                              </div>
+                            </v-col>
+                            <v-col class="shrink">
+                              <v-btn @click="trigger">Take action</v-btn>
+                            </v-col>
+                          </v-row>
+                        </v-alert>
+                      </div>
+                    </infinite-loading>
+                  </v-tab-item>
+                  <v-tab-item>
+                    <v-slide-item
+                      v-for="(video, i) in loading ? 12 : singerVideos"
+                      :key="i"
+                      class="mb-5"
+                    >
+                      <v-skeleton-loader
+                        class="mx-auto"
+                        type="list-item-avatar-three-line"
+                        :loading="loading"
+                        tile
+                        large
+                      >
+                        <recommend-video-card
+                          :video="video"
+                        ></recommend-video-card>
+                      </v-skeleton-loader>
+                    </v-slide-item>
+                    <infinite-loading :identifier="infiniteId" @infinite="getSingerVideos">
+                      <div slot="spinner">
+                        <v-progress-circular
+                          indeterminate
+                          color="red"
+                        ></v-progress-circular>
+                      </div>
+                      <div slot="no-results"></div>
+                      <span slot="no-more"></span>
+                      <div slot="error" slot-scope="{ trigger }">
+                        <v-alert prominent type="error">
+                          <v-row align="center">
+                            <v-col class="grow">
+                              <div class="title">Error!</div>
+                              <div>
+                                Something went wrong, but don’t fret — let’s give it
+                                another shot.
+                              </div>
+                            </v-col>
+                            <v-col class="shrink">
+                              <v-btn @click="trigger">Take action</v-btn>
+                            </v-col>
+                          </v-row>
+                        </v-alert>
+                      </div>
+                    </infinite-loading>
+                  </v-tab-item>
+                </v-tabs-items>
+                
                 <!-- <v-col cols="12" sm="12" md="12" lg="12"> -->
-                <infinite-loading :identifier="infiniteId" @infinite="getVideos">
-                  <div slot="spinner">
-                    <v-progress-circular
-                      indeterminate
-                      color="red"
-                    ></v-progress-circular>
-                  </div>
-                  <div slot="no-results"></div>
-                  <span slot="no-more"></span>
-                  <div slot="error" slot-scope="{ trigger }">
-                    <v-alert prominent type="error">
-                      <v-row align="center">
-                        <v-col class="grow">
-                          <div class="title">Error!</div>
-                          <div>
-                            Something went wrong, but don’t fret — let’s give it
-                            another shot.
-                          </div>
-                        </v-col>
-                        <v-col class="shrink">
-                          <v-btn @click="trigger">Take action</v-btn>
-                        </v-col>
-                      </v-row>
-                    </v-alert>
-                  </div>
-                </infinite-loading>
+               
                 <!-- </v-col> -->
               </v-col>
             </v-row>
@@ -352,6 +374,8 @@
   import AddComment from '@/components/comments/AddComment'
   import CommentList from '@/components/comments/CommentList'
   import NavBar from '@/components/NavBar'
+  import RecommendVideoCard from '@/components/RecommendVideoCard'
+
   export default {
     data: () => ({
       subscribeMessage: '',
@@ -368,13 +392,17 @@
       video: {},
       videoId: '',
       videos: [],
+      singerVideos: [],
       page: 1,
+      singerPage: 1,
       infiniteId: +new Date(),
       truncate: true,
       signinDialog: false,
       details: {},
       url: process.env.VUE_APP_URL,
-      avatarURL: "https://www.hollywoodreporter.com/wp-content/uploads/2022/12/GettyImages-1448719385.jpg?w=1296"
+      avatarURL: "https://www.hollywoodreporter.com/wp-content/uploads/2022/12/GettyImages-1448719385.jpg?w=1296",
+      items: ['All', 'Related Videos', 'Video of singer', 'Recently Uploaded Videos', 'Watched Videos'],
+      tab: null
     }),
     computed: {
       ...mapGetters(['getCurrentUser', 'getUrl', 'isLoggedIn'])
@@ -450,6 +478,39 @@
           }
         }
       },
+      async getSingerVideos($state) {
+        // this.getChannel()
+        this.loading = true
+  
+        const videos = await VideoService.getBySingerId('public', {
+          singer_id: this.video.singer.id,
+          page: this.singerPage
+        })
+          .catch((err) => {
+            console.log(err)
+            this.errored = true
+          })
+          .finally(() => (this.loading = false))
+  
+        if (typeof videos === 'undefined') return
+  
+        // this.singerVideos = videos.data
+        if (videos.data.length) {
+          this.singerPage += 1
+  
+          this.singerVideos.push(...videos.data)
+          // console.log(this.videos)
+          if ($state) {
+            $state.loaded()
+          }
+  
+          this.loaded = true
+        } else {
+          if ($state) {
+            $state.complete()
+          }
+        }
+      },
       async checkSubscription(id) {
         if (!this.isLoggedIn) return
   
@@ -486,7 +547,8 @@
           })
         console.log(feeling)
         if (!feeling) return
-  
+          console.log('feeling')
+          console.log(feeling)
         if (feeling.data.status === 'like') this.feeling = 'like'
         else if (feeling.data.status === 'dislike') this.feeling = 'dislike'
       },
@@ -615,7 +677,8 @@
       AddComment,
       CommentList,
       SigninModal,
-      InfiniteLoading
+      InfiniteLoading,
+      RecommendVideoCard
     },
     mounted() {
       console.log(this.$route.params + 'mounted')
