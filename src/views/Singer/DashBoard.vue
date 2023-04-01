@@ -38,6 +38,10 @@
         v-on:closeDialog="dialog = false"
         v-on:openSnackbar=" snackbar = true"
       />
+      <subscribers-modal
+        :open-dialog="subscribersDialog"
+        @closeDialog="subscribersDialog = false"
+      />
       <v-snackbar  :timeout="timeout" v-model="snackbar">
         {{ uploadMessage }}
       </v-snackbar>
@@ -45,6 +49,7 @@
   </template>
   
   <script>
+  import SubscribersModal from '@/components/SubscribersModal'
   import UploadModal from '@/components/UploadVideoModal.vue'
   import StudioNavBar from '@/components/Singers/StudioNavBar.vue'
   export default {
@@ -58,7 +63,9 @@
       subscribersDialog: false
     }),
     components: {
-      UploadModal, StudioNavBar
+      UploadModal,
+      StudioNavBar,
+      SubscribersModal
     },
     mounted() {}
   }
