@@ -8,42 +8,35 @@
           ></v-toolbar-title
         >
         <v-spacer></v-spacer>
-        <v-text-field
-          flat
-          hide-details
-          append-icon="mdi-magnify"
-          placeholder="Search"
-          outlined
-          dense
-          v-model="searchText"
-          @click:append="search"
-        ></v-text-field>
-        <!-- <ais-instant-search>
-          <ais-voice-search>
-            <template v-slot="{
-      isBrowserSupported,
-      isListening,
-      toggleListening,
-      voiceListeningState,
-  }">
-    <button @click="toggleListening">click</button>
-    <p>isListening: {{ isListening ? 'true' : 'false' }}</p>
-    <p>isBrowserSupported: {{ isBrowserSupported ? 'true' : 'false' }}</p>
-    <pre>voiceListeningState: {{
-      JSON.stringify(voiceListeningState, null, 2)
-    }}</pre>
-  </template>
-          </ais-voice-search>>
-        </ais-instant-search> -->
+        <div class="d-flex searchBox" >
+          <v-text-field
+            flat
+            hide-details
+            append-icon="mdi-magnify"
+            placeholder="Search"
+            outlined
+            dense
+            v-model="searchText"
+            @click:append="search"
+          ></v-text-field>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on: tooltip }">
+              <v-btn icon class="speechButton" v-on="{ ...tooltip}" @click.prevent="startConversion">
+                <v-icon size="25" v-if="!recording">mdi-microphone</v-icon>
+                <v-icon size="25" v-if="recording">mdi-dots-horizontal</v-icon>
+              </v-btn>
+            </template>
+            <span>Search by voice</span>
+          </v-tooltip>
+        </div>
         <v-spacer></v-spacer>
-  
+       
         <v-menu offsetY>
           <template v-slot:activator="{ on: menu }">
             <v-tooltip bottom>
               <template v-slot:activator="{ on: tooltip }">
                 <v-btn icon class="mr-7" v-on="{ ...tooltip, ...menu }"
-                  ><v-icon size="25">mdi-video-plus</v-icon></v-btn
-                >
+                  ><v-icon size="25">mdi-video-plus</v-icon></v-btn>
               </template>
               <span>Create a video and more</span>
             </v-tooltip>
@@ -372,14 +365,10 @@
   import NotificationService from '@/services/NotificationService'
   import moment from "moment";
 
-  // import { AisVoiceSearch, AisInstantSearch } from 'vue-instantsearch';
 
   export default {
-    // components: {
-    //   AisVoiceSearch,
-    //   AisInstantSearch
-    // },
     data: () => ({
+      recording: false,
       notiCount: null,
       notifications: [],
       url: "https://cdn-icons-png.flaticon.com/512/219/219988.png",
@@ -514,7 +503,9 @@
         { text: 'Test new features', link: '#' }
       ],
       channelLength: 0,
-      searchText: ''
+      searchText: '',
+      runtimeTranscription_: '',
+      lang_: "en-EN",
       // user: null
     }),
     computed: {
@@ -587,6 +578,37 @@
       },
       dateFormatter(date) {
         return moment(date).fromNow();
+      },
+      startConversion() {
+        this.recording = true
+        // speechInput initialization
+        window.SpeechRecognition =
+        window.SpeechRecognition || 
+        window.webkitSpeechRecognition
+        const recognition = new window.SpeechRecognition()
+        recognition.lang = this.lang_
+        recognition.interimResults = true
+
+        // record word from current speech
+        recognition.addEventListener("result", event => {
+          this.recording = true
+          document.querySelector('.speechButton').classList.add('recording')
+          var text = Array.from(event.results)
+            .map(result => result[0])
+            .map(result => result.transcript)
+            .join("")
+          this.runtimeTranscription_ = text
+        })
+
+        recognition.addEventListener("end", () => {
+        this.searchText = this.runtimeTranscription_
+        this.recording = false
+        document.querySelector('.speechButton').blur()
+        document.querySelector('.speechButton').classList.remove('recording')
+        recognition.stop()
+        this.search()
+        })
+        recognition.start()
       }
     },
     // beforeRouteLeave(to, from, next) {
@@ -632,6 +654,26 @@
   </script>
   
   <style lang="scss">
+  .searchBox {
+    width: 800px; /* or whatever width you want. */
+    max-width: 800px; /* or whatever width you want. */
+    display: inline-block;
+    position: relative;
+    .speechButton {
+      background: var(--button-color);
+      box-shadow: 0 0.5rem 1rem var(--shadow);
+      border-radius: 50px;
+      height: 60px;
+      width: 60px;
+      display: block;
+      position: absolute;
+      right: -80px;
+      top: -4px;
+      // left: 50%;
+      transform: translateX(-50%);
+    }
+  }
+  
   .unreadNoti{
     background-color: #eeeeee;
   }
