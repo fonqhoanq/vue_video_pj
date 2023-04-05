@@ -38,5 +38,10 @@ export default {
   },
   deleteById(id) {
     return Api().delete(`videos/${id}`)
+  },
+  getByCategory(params) {
+    return Api().get('videos/category', {
+      params
+    })
   }
 }

@@ -17,6 +17,83 @@
       </v-alert>
 
       <main v-else>
+        <v-btn
+          :class="[
+            {'grey grey--text lighten-3 text--darken-3': musicType !== ''},
+            {'black white--text': musicType == ''},
+            'mr-3 mb-3']"
+          @click="changeVideoType('')"
+        >All</v-btn>
+        <v-btn
+          :class="[
+            {'grey grey--text lighten-3 text--darken-3': musicType !== 'Rock'},
+            {'black white--text': musicType == 'Rock'},
+            'mr-3 mb-3']"
+          @click="changeVideoType('Rock')"
+        >Rock</v-btn>
+        <v-btn
+          :class="[
+            {'grey grey--text lighten-3 text--darken-3': musicType !== 'Pop'},
+            {'black white--text': musicType == 'Pop'},
+            'mr-3 mb-3']"
+          @click="changeVideoType('Pop')"
+        >Pop</v-btn>
+        <v-btn
+          :class="[
+            {'grey grey--text lighten-3 text--darken-3': musicType !== 'Country Music'},
+            {'black white--text': musicType == 'Country Music'},
+            'mr-3 mb-3']"
+          @click="changeVideoType('Country Music')"
+        >Country Music</v-btn>
+        <v-btn
+          :class="[
+            {'grey grey--text lighten-3 text--darken-3': musicType !== 'Electronic'},
+            {'black white--text': musicType == 'Electronic'},
+            'mr-3 mb-3']"
+          @click="changeVideoType('Electronic')"
+        >Electronic</v-btn>
+        <v-btn
+          :class="[
+            {'grey grey--text lighten-3 text--darken-3': musicType !== 'Funk'},
+            {'black white--text': musicType == 'Funk'},
+            'mr-3 mb-3']"
+          @click="changeVideoType('Funk')"
+        >Funk</v-btn>
+        <v-btn
+          :class="[
+            {'grey grey--text lighten-3 text--darken-3': musicType !== 'Hip Hop'},
+            {'black white--text': musicType == 'Hip Hop'},
+            'mr-3 mb-3']"
+          @click="changeVideoType('Hip Hop')"
+        >Hip Hop</v-btn>
+        <v-btn
+          :class="[
+            {'grey grey--text lighten-3 text--darken-3': musicType !== 'Jazz'},
+            {'black white--text': musicType == 'Jazz'},
+            'mr-3 mb-3']"
+          @click="changeVideoType('Jazz')"
+        >Jazz</v-btn>
+        <v-btn
+          :class="[
+            {'grey grey--text lighten-3 text--darken-3': musicType !== 'Latin'},
+            {'black white--text': musicType == 'Latin'},
+            'mr-3 mb-3']"
+          @click="changeVideoType('Latin')"
+        >Latin</v-btn>
+        <v-btn
+          :class="[
+            {'grey grey--text lighten-3 text--darken-3': musicType !== 'Soul'},
+            {'black white--text': musicType == 'Soul'},
+            'mr-3 mb-3']"
+          @click="changeVideoType('Soul')"
+        >Soul</v-btn>
+        <v-btn
+          :class="[
+            {'grey grey--text lighten-3 text--darken-3': musicType !== 'R&B'},
+            {'black white--text': musicType == 'R&B'},
+            'mr-3 mb-3']"
+          @click="changeVideoType('R&B')"
+        >R&B</v-btn>
         <h3 class="headline font-weight-medium">Recommended</h3>
         <v-row>
           <v-col
@@ -88,22 +165,38 @@ export default {
     errored: false,
     show: false,
     videos: [],
-    page: 1
+    page: 1,
+    musicType: ''
   }),
   methods: {
     async getVideos($state) {
       if (!this.loaded) {
         this.loading = true
       }
-
-      const videos = await VideoService.getAll('public', { page: this.page })
-        .catch((err) => {
-          console.log(err)
-          this.errored = true
+      var videos = []
+      if (this.musicType === '') {
+        videos = await VideoService.getAll('public', { page: this.page })
+          .catch((err) => {
+            console.log(err)
+            this.errored = true
+          })
+          .finally(() => {
+            this.loading = false
+          })
+      } else {
+        videos = await VideoService.getByCategory({ 
+          page: this.page,
+          category: this.musicType 
         })
-        .finally(() => {
-          this.loading = false
-        })
+          .catch((err) => {
+            console.log(err)
+            this.errored = true
+          })
+          .finally(() => {
+            this.loading = false
+          })
+      }
+      
       if (typeof videos === 'undefined') return
       // this.videos.push(...videos.data)
       // $state.complete()
@@ -118,6 +211,12 @@ export default {
     },
     dateFormatter(date) {
       return moment(date).fromNow()
+    },
+    async changeVideoType (type) {
+      this.musicType = type
+      this.page = 1
+      this.videos = []
+      this.getVideos()
     }
   },
   components: {

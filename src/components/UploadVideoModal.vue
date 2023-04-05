@@ -267,6 +267,7 @@
      
         fd.append("url", this.selectedFile);
         fd.append("singer_id", this.getCurrentSinger.id);
+        fd.append("category_id", 1);
         let video = await VideoService.uploadVideo(fd, {
           onUploadProgress: (uploadEvent) => {
             this.value = Math.round(
