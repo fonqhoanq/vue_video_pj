@@ -63,6 +63,77 @@
             </v-list-item> -->
           </v-list>
         </v-menu>
+        <v-menu 
+          offset-y left 
+          v-if="isLoggedIn"
+          >
+          <template v-slot:activator="{ on: menu }">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on: tooltip }">
+                <div class="notiWrap">
+                  <v-btn icon class="mr-7" v-on="{ ...tooltip, ...menu }"
+                  ><v-icon size="25">mdi-bell-outline</v-icon>
+                  </v-btn>
+                  <span v-if="notiCount !== 0" class="notiCount">{{ notiCount }}</span>
+                </div>
+              </template>
+              <span>Notifications</span>
+            </v-tooltip>
+          </template>
+
+          <v-card>
+            <v-list-item>
+              <v-list-item-title
+              class="mt-2 ml-2"
+            >
+              Notifications
+            </v-list-item-title>
+            </v-list-item>
+            <v-list
+              style="max-height: 500px"
+              class="notification overflow-y-auto"
+            >
+            <template
+            v-for="(notification, i) in notifications"
+            >
+              <v-list-item
+                :key="i"
+                :class="[
+                {'unreadNoti': !notification.readAt}]"
+                @click="updateNotification(notification)"
+              >
+                <v-list-item-avatar class="ml-2">
+                  <v-avatar>
+                    <img
+                    :src="`${getUrl}${notification.avatarUrl}`"
+                    />
+                  </v-avatar>
+                </v-list-item-avatar>
+                <v-list-item-content class="mr-2">
+                  <div class="d-flex">
+                    <div class="content">
+                      <v-list-item-title class="title">{{
+                        notification.content
+                      }}</v-list-item-title>
+                      <v-list-item-subtitle>
+                        {{ dateFormatter(notification.createdAt) }}
+                      </v-list-item-subtitle>
+                    </div>
+                    <v-img
+                      height="60"
+                      width="100"
+                      class="img_url"
+                      :src="`${getUrl}${notification.thumbnails}`"
+                    >
+                    </v-img>
+                  </div>
+                </v-list-item-content>
+              </v-list-item>
+            </template>
+
+            </v-list>
+          </v-card>
+        </v-menu>
         <!-- <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-btn icon v-on="on"> <v-icon size="25">mdi-apps</v-icon></v-btn>
@@ -298,6 +369,9 @@
   import { mapGetters } from 'vuex'
   import SubscriptionService from '@/services/SubscriptionService'
   import HistoryService from '@/services/HistoryService'
+  import NotificationService from '@/services/NotificationService'
+  import moment from "moment";
+
   // import { AisVoiceSearch, AisInstantSearch } from 'vue-instantsearch';
 
   export default {
@@ -306,6 +380,8 @@
     //   AisInstantSearch
     // },
     data: () => ({
+      notiCount: null,
+      notifications: [],
       url: "https://cdn-icons-png.flaticon.com/512/219/219988.png",
       drawer: true,
       items: [
@@ -474,8 +550,31 @@
           params
         ).catch((err) => console.log(err))
         this.items[2].pages = channels.data
-        console.log(this.items[2].pages.length)
         this.channelLength = 3
+      },
+      async getNotifications() {
+        const params = {
+          user_id: this.getCurrentUser.id,
+          noti_type: 'recent_upload_video_notification'
+        }
+        const notifications = await NotificationService.getNotifications(
+          params
+        ).catch((err) => console.log(err))
+
+        if (!notifications) return
+        this.notifications = notifications.data
+        this.notiCount = this.notifications.filter(notification => !notification.readAt).length
+      },
+      async updateNotification(notification) {
+        const newNotification = NotificationService.updateNotification(notification.id)
+          .catch((err)=> {
+            console.log(err)
+          })
+        if (!newNotification) return
+        this.$router.push({
+          name: 'WatchVideo',
+          params: {id: notification.videoId}
+        })
       },
       moreChannels() {
         if (this.channelLength === 3)
@@ -485,6 +584,9 @@
       signOut() {
         this.$store.dispatch('logoutUser')
         this.$router.push({ name: 'Signin'})
+      },
+      dateFormatter(date) {
+        return moment(date).fromNow();
       }
     },
     // beforeRouteLeave(to, from, next) {
@@ -508,7 +610,10 @@
       //   this.searchText = this.$route.query['search-query']
       console.log("mounted:")
       console.log(this.getCurrentUser.avatarUrl)
-      if (this.getCurrentUser) this.getSubscribedChannels()
+      if (this.getCurrentUser) {
+        this.getNotifications()
+        this.getSubscribedChannels()
+      }
       // this.user = this.$store.getters.getCurrentUser
       // console.log(this.user)
       this.drawer = this.$vuetify.breakpoint.mdAndDown ? false : true
@@ -527,6 +632,46 @@
   </script>
   
   <style lang="scss">
+  .unreadNoti{
+    background-color: #eeeeee;
+  }
+  .notification {
+    padding: 0px !important;
+    margin: 0px !important;
+    
+    // height: 300px !important;
+    // overflow-y: auto !important;
+   }
+  .notiWrap {
+    position: relative;
+    .notiCount {
+      position: absolute;
+      right: 30px;
+      top: 5px;
+      min-width: 20px;
+      height: 20px;
+      line-height: 20px;
+      border-radius: 30px;
+      padding: 0 2px;
+      font-size: 12px;
+      text-align: center;
+      background-color: #f34423;
+      color: white;
+      font-weight: bold;
+    }
+  }
+  .content {
+    width: 250px;
+    .title {
+      white-space: normal;
+      font-size: 0.9rem !important;
+      font-weight: 400;
+    }
+  }
+  .img_url {
+    border: 1px;
+    border-radius: 5px !important;
+  }
   .v-list-item__avatar {
     justify-content: center !important;
   }
