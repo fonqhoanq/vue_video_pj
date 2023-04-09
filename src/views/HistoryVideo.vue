@@ -195,8 +195,11 @@
                 <p class="title font-weight-regular pl-5 mb-2">History Type</p>
                 <v-list class=" grey lighten-4">
                   <v-list-item-group>
-                    <template v-for="(item, i) in items">
-                      <v-divider :key="i"></v-divider>
+                    <div 
+                      v-for="(item, i) in items"
+                      :key="i"
+                    >
+                      <v-divider></v-divider>
                       <v-list-item
                         active-class="grey lighten-4"
                         :key="`item-${i}`"
@@ -211,7 +214,7 @@
                           <v-radio :key="item" :value="item"></v-radio>
                         </v-list-item-action>
                       </v-list-item>
-                    </template>
+                    </div>
                   </v-list-item-group>
                 </v-list>
                 <div>

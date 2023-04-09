@@ -20,7 +20,7 @@
         <!-- </v-responsive> -->
       </v-col>
       <v-col>
-        <div class="ml-2">
+        <div class="ml-2 mt-2">
           <v-card-title
             class="pl-2 pt-0 subtitle-1 font-weight-bold"
             style="line-height: 1"

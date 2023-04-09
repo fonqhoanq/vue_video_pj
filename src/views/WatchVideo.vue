@@ -19,7 +19,7 @@
           </v-alert>
           <v-col v-else cols="11" class="mx-auto">
             <v-row>
-              <v-col cols="12" sm="12" md="8" lg="8">
+              <v-col cols="12" sm="12" md="9" lg="9">
                 <v-skeleton-loader
                   type="card-avatar, article, actions"
                   :loading="videoLoading"
@@ -27,16 +27,14 @@
                   large
                 >
                   <div ref="hello">
-                    <v-responsive max-height="450">
+                    <v-responsive max-height="650">
                       <video
                         ref="videoPlayer"
                         controls
                         style="height: 100%; width: 100%"
-                      >
-                        <source
-                          :src="`${url}${video.url}`"
-                          type="video/mp4"
-                        />
+                        :src="`${url}${video.url}`"
+                        type="video/mp4"
+                        >
                       </video>
                     </v-responsive>
   
@@ -233,7 +231,55 @@
                 </v-row>
               </v-col>
   
-              <v-col cols="12" sm="12" md="4" lg="4">
+              <v-col cols="12" sm="12" md="3" lg="3">
+                <template v-if="playlist">
+                  <v-card>
+                    <v-list-item>
+                      <v-list-item-title
+                      class="mt-2 ml-2"
+                    >
+                      {{ playlist.title }}
+                    </v-list-item-title>
+                    </v-list-item>
+                    <v-list
+                      style="max-height: 500px"
+                      class="overflow-y-auto"
+                    >
+                    <div
+                    v-for="(playlist, i) in playlist.playlist_videos"
+                    :key="i"
+                    >
+                      <v-list-item
+                        :class="[
+                          {'playing': playlist.video.id === video.id}
+                          ]"
+                        @click="handlePlayList(playlist.video.id)"
+                      >
+                        <v-list-item-content class="mr-2">
+                          <div class="d-flex">
+                            <v-img
+                              height="60"
+                              width="100"
+                              class="img_url"
+                              :src="`${getUrl}${playlist.video.thumbnails}`"
+                            >
+                            </v-img>
+                            <div class="content">
+                              <v-list-item-title class="title">{{
+                                playlist.video.title
+                              }}</v-list-item-title>
+                              <v-list-item-subtitle>
+                                {{ playlist.video.singer.channelName }}
+                              </v-list-item-subtitle>
+                            </div>
+                          </div>
+                        </v-list-item-content>
+                      </v-list-item>
+                    </div>
+        
+                    </v-list>
+                  </v-card>
+                </template>
                 <hr class="grey--text" />
                 <h4 class="mb-3 mt-3">Up next</h4>
                 <v-tabs
@@ -364,17 +410,18 @@
   import moment from 'moment'
   import { mapGetters } from 'vuex'
   import InfiniteLoading from 'vue-infinite-loading'
-  
+
   import VideoService from '@/services/VideoService'
   import SubscriptionService from '@/services/SubscriptionService'
   import FeelingService from '@/services/FeelingService'
-  // import HistoryService from '@/services/HistoryService'
+  import HistoryService from '@/services/HistoryService'
   
   import SigninModal from '@/components/SigninModal'
   import AddComment from '@/components/comments/AddComment'
   import CommentList from '@/components/comments/CommentList'
   import NavBar from '@/components/NavBar'
   import RecommendVideoCard from '@/components/RecommendVideoCard'
+  import PlaylistService from '@/services/PlaylistService'
 
   export default {
     data: () => ({
@@ -393,6 +440,7 @@
       videoId: '',
       videos: [],
       singerVideos: [],
+      playlist: {},
       page: 1,
       singerPage: 1,
       infiniteId: +new Date(),
@@ -441,13 +489,13 @@
         // )
         //   return this.$router.push('/')
   
-        // const data = {
-        //   history_type: 'watch',
-        //   video_id: this.video.id,
-        //   user_id: this.getCurrentUser.id
-        // }
+        const data = {
+          history_type: 'watch',
+          video_id: this.video.id,
+          user_id: this.getCurrentUser.id
+        }
   
-        // await HistoryService.createHistory(data).catch((err) => console.log(err))
+        await HistoryService.createHistory(data).catch((err) => console.log(err))
       },
       async getVideos($state) {
         this.errored = false
@@ -460,17 +508,14 @@
             this.errored = true
           })
           .finally(() => (this.loading = false))
-        // console.log(videos)
         if (typeof videos === 'undefined') return
         if (videos.data.length) {
           this.page += 1
   
           this.videos.push(...videos.data)
-          // console.log(this.videos)
           if ($state) {
             $state.loaded()
           }
-  
           this.loaded = true
         } else {
           if ($state) {
@@ -510,6 +555,22 @@
             $state.complete()
           }
         }
+      },
+      async getPlaylistVideos(id) {
+        this.loading = true
+        const playlist = await PlaylistService.getPlaylistVideosById(id)
+          .catch((err) => {
+            console.log(err)
+            this.errored = true
+          })
+          .finally(() => {
+            this.loading = false
+          })
+        if (!playlist) return
+        console.log('playlist')
+        console.log(playlist)
+        this.playlist = playlist.data
+        console.log(this.playlistVideos)
       },
       async checkSubscription(id) {
         if (!this.isLoggedIn) return
@@ -670,6 +731,15 @@
       },
       dateFormatter(date) {
         return moment(date).fromNow()
+      },
+      handlePlayList(id) {
+        this.$router.push({
+          name: 'WatchVideo',
+          params: {
+            id: id,
+            playlist_id: this.playlist.id
+          }
+        })
       }
     },
     components: {
@@ -686,17 +756,23 @@
       console.log('video: ' + this.$route.params.id)
       console.log('is login ?' + this.isLoggedIn)
       if (this.isLoggedIn) {
-
+        if (this.$route.params.playlist_id) {
+          this.getPlaylistVideos(this.$route.params.playlist_id)
+        }
         this.updateViews(this.$route.params.id)
       }
     },
     beforeRouteUpdate(to, from, next) {
-        console.log("hehoeh")
       this.page = 1
-      ;(this.loading = false), (this.loaded = false), (this.videos = [])
+      ;(this.loading = false), (this.loaded = false), (this.videos = []), (this.video = {}), (this.playlist = {})
       this.infiniteId += 1
       console.log('to params' + to.params.id)
       this.getVideo(to.params.id)
+      this.updateViews(to.params.id)
+      if (to.params.playlist_id) {
+        this.getPlaylistVideos(to.params.playlist_id)
+      }
+      window.scroll(0, 0)
       next()
     },
     name: 'WatchVideo'
@@ -726,6 +802,22 @@
   }
   .cardVideo {
     border-radius: 5px;
+  }
+  .content {
+    width: 250px;
+    .title {
+      white-space: normal;
+      font-size: 0.9rem !important;
+      font-weight: 400;
+    }
+  }
+  .img_url {
+    border: 1px;
+    border-radius: 5px !important;
+    margin-right: 4px;
+  }
+  .playing {
+    background-color: #eeeeee;
   }
   </style>
   
