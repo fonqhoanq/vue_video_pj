@@ -86,11 +86,11 @@
               style="max-height: 500px"
               class="notification overflow-y-auto"
             >
-            <template
+            <div
             v-for="(notification, i) in notifications"
+            :key="i"
             >
               <v-list-item
-                :key="i"
                 :class="[
                 {'unreadNoti': !notification.readAt}]"
                 @click="updateNotification(notification)"
@@ -122,7 +122,7 @@
                   </div>
                 </v-list-item-content>
               </v-list-item>
-            </template>
+            </div>
 
             </v-list>
           </v-card>

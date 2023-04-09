@@ -17,83 +17,106 @@
       </v-alert>
 
       <main v-else>
-        <v-btn
-          :class="[
-            {'grey grey--text lighten-3 text--darken-3': musicType !== ''},
-            {'black white--text': musicType == ''},
-            'mr-3 mb-3']"
-          @click="changeVideoType('')"
-        >All</v-btn>
-        <v-btn
-          :class="[
-            {'grey grey--text lighten-3 text--darken-3': musicType !== 'Rock'},
-            {'black white--text': musicType == 'Rock'},
-            'mr-3 mb-3']"
-          @click="changeVideoType('Rock')"
-        >Rock</v-btn>
-        <v-btn
-          :class="[
-            {'grey grey--text lighten-3 text--darken-3': musicType !== 'Pop'},
-            {'black white--text': musicType == 'Pop'},
-            'mr-3 mb-3']"
-          @click="changeVideoType('Pop')"
-        >Pop</v-btn>
-        <v-btn
-          :class="[
-            {'grey grey--text lighten-3 text--darken-3': musicType !== 'Country Music'},
-            {'black white--text': musicType == 'Country Music'},
-            'mr-3 mb-3']"
-          @click="changeVideoType('Country Music')"
-        >Country Music</v-btn>
-        <v-btn
-          :class="[
-            {'grey grey--text lighten-3 text--darken-3': musicType !== 'Electronic'},
-            {'black white--text': musicType == 'Electronic'},
-            'mr-3 mb-3']"
-          @click="changeVideoType('Electronic')"
-        >Electronic</v-btn>
-        <v-btn
-          :class="[
-            {'grey grey--text lighten-3 text--darken-3': musicType !== 'Funk'},
-            {'black white--text': musicType == 'Funk'},
-            'mr-3 mb-3']"
-          @click="changeVideoType('Funk')"
-        >Funk</v-btn>
-        <v-btn
-          :class="[
-            {'grey grey--text lighten-3 text--darken-3': musicType !== 'Hip Hop'},
-            {'black white--text': musicType == 'Hip Hop'},
-            'mr-3 mb-3']"
-          @click="changeVideoType('Hip Hop')"
-        >Hip Hop</v-btn>
-        <v-btn
-          :class="[
-            {'grey grey--text lighten-3 text--darken-3': musicType !== 'Jazz'},
-            {'black white--text': musicType == 'Jazz'},
-            'mr-3 mb-3']"
-          @click="changeVideoType('Jazz')"
-        >Jazz</v-btn>
-        <v-btn
-          :class="[
-            {'grey grey--text lighten-3 text--darken-3': musicType !== 'Latin'},
-            {'black white--text': musicType == 'Latin'},
-            'mr-3 mb-3']"
-          @click="changeVideoType('Latin')"
-        >Latin</v-btn>
-        <v-btn
-          :class="[
-            {'grey grey--text lighten-3 text--darken-3': musicType !== 'Soul'},
-            {'black white--text': musicType == 'Soul'},
-            'mr-3 mb-3']"
-          @click="changeVideoType('Soul')"
-        >Soul</v-btn>
-        <v-btn
-          :class="[
-            {'grey grey--text lighten-3 text--darken-3': musicType !== 'R&B'},
-            {'black white--text': musicType == 'R&B'},
-            'mr-3 mb-3']"
-          @click="changeVideoType('R&B')"
-        >R&B</v-btn>
+        <div class="wrapBtn">
+          <v-btn
+            :class="[
+              {'grey grey--text lighten-3 text--darken-3': musicType !== ''},
+              {'black white--text': musicType == ''},
+              'mr-3 mb-3']"
+            @click="changeVideoType('')"
+          >All</v-btn>
+          <v-btn
+            :class="[
+              {'grey grey--text lighten-3 text--darken-3': musicType !== 'Rock'},
+              {'black white--text': musicType == 'Rock'},
+              'mr-3 mb-3']"
+            @click="changeVideoType('Rock')"
+          >Rock</v-btn>
+          <v-btn
+            :class="[
+              {'grey grey--text lighten-3 text--darken-3': musicType !== 'Pop'},
+              {'black white--text': musicType == 'Pop'},
+              'mr-3 mb-3']"
+            @click="changeVideoType('Pop')"
+          >Pop</v-btn>
+          <v-btn
+            :class="[
+              {'grey grey--text lighten-3 text--darken-3': musicType !== 'Country Music'},
+              {'black white--text': musicType == 'Country Music'},
+              'mr-3 mb-3']"
+            @click="changeVideoType('Country Music')"
+          >Country Music</v-btn>
+          <v-btn
+            :class="[
+              {'grey grey--text lighten-3 text--darken-3': musicType !== 'Electronic'},
+              {'black white--text': musicType == 'Electronic'},
+              'mr-3 mb-3']"
+            @click="changeVideoType('Electronic')"
+          >Electronic</v-btn>
+          <v-btn
+            :class="[
+              {'grey grey--text lighten-3 text--darken-3': musicType !== 'Funk'},
+              {'black white--text': musicType == 'Funk'},
+              'mr-3 mb-3']"
+            @click="changeVideoType('Funk')"
+          >Funk</v-btn>
+          <v-btn
+            :class="[
+              {'grey grey--text lighten-3 text--darken-3': musicType !== 'Hip Hop'},
+              {'black white--text': musicType == 'Hip Hop'},
+              'mr-3 mb-3']"
+            @click="changeVideoType('Hip Hop')"
+          >Hip Hop</v-btn>
+          <v-btn
+            :class="[
+              {'grey grey--text lighten-3 text--darken-3': musicType !== 'Jazz'},
+              {'black white--text': musicType == 'Jazz'},
+              'mr-3 mb-3']"
+            @click="changeVideoType('Jazz')"
+          >Jazz</v-btn>
+          <v-btn
+            :class="[
+              {'grey grey--text lighten-3 text--darken-3': musicType !== 'Latin'},
+              {'black white--text': musicType == 'Latin'},
+              'mr-3 mb-3']"
+            @click="changeVideoType('Latin')"
+          >Latin</v-btn>
+          <v-btn
+            :class="[
+              {'grey grey--text lighten-3 text--darken-3': musicType !== 'Soul'},
+              {'black white--text': musicType == 'Soul'},
+              'mr-3 mb-3']"
+            @click="changeVideoType('Soul')"
+          >Soul</v-btn>
+          <v-btn
+            :class="[
+              {'grey grey--text lighten-3 text--darken-3': musicType !== 'R&B'},
+              {'black white--text': musicType == 'R&B'},
+              'mr-3 mb-3']"
+            @click="changeVideoType('R&B')"
+          >R&B</v-btn>
+        </div>
+        <div v-if="isLoggedIn">
+          <h3 class="headline font-weight-medium">Playlists</h3>
+          <v-row>
+            <v-col
+              cols="12"
+              sm="6"
+              md="4"
+              lg="3"
+              v-for="(playlist, i) in loading ? 12 : playlists"
+              :key="i"
+              class="mx-xs-auto"
+            >
+              <v-skeleton-loader type="card-avatar" :loading="loading">
+                <playlist-card
+                  :card="{ maxWidth: 350 }"
+                  :playlist="playlist"
+                ></playlist-card>
+              </v-skeleton-loader>
+            </v-col>
+          </v-row>
+        </div>
         <h3 class="headline font-weight-medium">Recommended</h3>
         <v-row>
           <v-col
@@ -153,10 +176,12 @@
 <script>
 import InfiniteLoading from 'vue-infinite-loading'
 import moment from 'moment'
-
+import { mapGetters } from 'vuex'
+import PlaylistService from '@/services/PlaylistService'
 import VideoCard from '@/components/VideoCard'
 import VideoService from '@/services/VideoService'
 import NavBar from '@/components/NavBar'
+import PlaylistCard from '@/components/PlaylistCard.vue'
 export default {
   name: 'HomeView',
   data: () => ({
@@ -165,14 +190,19 @@ export default {
     errored: false,
     show: false,
     videos: [],
+    playlists: [],
     page: 1,
     musicType: ''
   }),
+  computed: {
+    ...mapGetters(['getCurrentUser', 'getUrl', 'isLoggedIn'])
+  },
   methods: {
     async getVideos($state) {
       if (!this.loaded) {
         this.loading = true
       }
+      console.log("hehe")
       var videos = []
       if (this.musicType === '') {
         videos = await VideoService.getAll('public', { page: this.page })
@@ -209,6 +239,24 @@ export default {
         $state.complete()
       }
     },
+    async getPlaylists() {
+      this.loading = true
+      const params = {
+        user_id: this.getCurrentUser.id
+      }
+      const playlists = await PlaylistService.getPlaylistForUser(params)
+        .catch((err) => {
+          console.log(err)
+          this.errored = true
+        })
+        .finally(() => {
+          this.loading = false
+        })
+      if (typeof playlists === 'undefined') return
+      this.playlists = playlists.data
+      console.log('playlist: ')
+      console.log(playlists)
+    },
     dateFormatter(date) {
       return moment(date).fromNow()
     },
@@ -219,10 +267,17 @@ export default {
       this.getVideos()
     }
   },
+  mounted() {
+    if (this.isLoggedIn) {
+      this.getPlaylists()
+    }
+    this.getVideos()
+  },
   components: {
     VideoCard,
     InfiniteLoading,
     NavBar,
+    PlaylistCard
   }
 }
 </script>
@@ -230,5 +285,10 @@ export default {
 <style lang="scss">
 .card {
   background: #f9f9f9 !important;
+}
+.wrapBtn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 </style>
