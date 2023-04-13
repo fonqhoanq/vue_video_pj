@@ -1,6 +1,6 @@
 <template>
     <div>
-      <div v-if="!comments.data.length">
+      <div v-if="!comments.length">
         <p>No comment yet, leave a comment</p>
       </div>
       <div v-for="(comment) in loading ? 4 : comments" :key="comment.id">
@@ -51,7 +51,7 @@
                   </v-menu>
                 </div>
                 <v-list-item-subtitle
-                  class="mt-n2 black--text text--darken-4 caption"
+                  class="mt-n2 black--text text--darken-4"
                   >{{ comment.text }}</v-list-item-subtitle
                 >
   
@@ -108,7 +108,7 @@
                         <v-btn text @click="hideReply(comment.id)" small
                           >Cancel</v-btn
                         >
-                        <!-- <v-btn
+                        <v-btn
                           class="blue darken-3 white--text"
                           depressed
                           tile
@@ -118,7 +118,7 @@
                             index = i
                             addReply($event, comment.id)
                           "
-                          >Reply</v-btn -->
+                          >Reply</v-btn
                         >
                       </div>
                     </v-list-item-content>
@@ -193,7 +193,7 @@
                             </v-menu>
                           </div>
                           <v-list-item-subtitle
-                            class="mt-n2 black--text text--darken-4 caption"
+                            class="mt-n2 black--text text--darken-4"
                             >{{ reply.text }}</v-list-item-subtitle
                           >
                         </v-list-item-content>
@@ -220,7 +220,7 @@
   import { mapGetters } from 'vuex'
   
   import CommentService from '@/services/CommentService'
-  // import ReplyService from '@/services/ReplyService'
+  import ReplyService from '@/services/ReplyService'
   export default {
     props: {
       videoId: {
@@ -255,8 +255,8 @@
         console.log("comments:")
         console.log(comments)
         // console.log(this.$store.getters.getComments.data)
-        this.comments = comments
-        console.log((this.comments.data.length))
+        this.comments = comments.data
+        console.log((this.comments.length))
 
         // console.log(this.comments.length)
         // this.loading = false
@@ -280,54 +280,55 @@
         this.comments = this.$store.getters.getComments.data
         this.$emit('videoCommentLength')
       },
-      // async addReply(event, id) {
-      //   if (!this.isLoggedIn) return
-      //   if (this.$refs[`input${id}`][0].$refs.input.value == '') return
+      async addReply(event, id) {
+        if (!this.isLoggedIn) return
+        if (this.$refs[`input${id}`][0].$refs.input.value == '') return
   
-      //   this.btnLoading = true
-      //   // console.log((event.target.loading = true))
-      //   this.$refs[`form${id}`][0].reset()
-      //   // console.log(this.$refs[`input${id}`][0].$refs.input.value)
+        this.btnLoading = true
+        // console.log((event.target.loading = true))
+        this.$refs[`form${id}`][0].reset()
+        // console.log(this.$refs[`input${id}`][0].$refs.input.value)
   
-      //   const reply = await ReplyService.createReply({
-      //     commentId: id,
-      //     text: this.$refs[`input${id}`][0].$refs.input.value
-      //   })
-      //     .catch((err) => {
-      //       console.log(err)
-      //     })
-      //     .finally(() => {
-      //       this.btnLoading = false
-      //       // this.$store.dispatch('setComments', this.videoId)
-      //     })
-      //   reply.data.data.user = this.$store.getters.getCurrentUser
-      //   // this.$store.dispatch('addComment', reply.data.data)
-      //   // console.log(this.$store.getters.getComments.data)
-      //   let comment = this.comments.find(
-      //     (comment) => comment.id.toString() === id.toString()
-      //   )
-      //   // console.log(comment)
-      //   if (!comment.replies) {
-      //     // console.log('1')
-      //     // comment.replies = []
-      //     comment.replies.push(reply.data.data)
-      //   } else {
-      //     // console.log('2')
-      //     comment.replies.unshift(reply.data.data)
-      //     // this.comments
-      //     //   .find((comment) => comment.id === id)
-      //     //   .replies.unshift(reply.data.data)
-      //   }
+        const reply = await ReplyService.createReply({
+          comment_id: id,
+          user_id: this.getCurrentUser.id,
+          text: this.$refs[`input${id}`][0].$refs.input.value
+        })
+          .catch((err) => {
+            console.log(err)
+          })
+          .finally(() => {
+            this.btnLoading = false
+            // this.$store.dispatch('setComments', this.videoId)
+          })
+        reply.data.user = this.$store.getters.getCurrentUser
+        // this.$store.dispatch('addComment', reply.data.data)
+        // console.log(this.$store.getters.getComments.data)
+        let comment = this.comments.find(
+          (comment) => comment.id.toString() === id.toString()
+        )
+        // console.log(comment)
+        if (!comment.replies) {
+          // console.log('1')
+          // comment.replies = []
+          comment.replies.push(reply.data)
+        } else {
+          // console.log('2')
+          comment.replies.unshift(reply.data)
+          // this.comments
+          //   .find((comment) => comment.id === id)
+          //   .replies.unshift(reply.data.data)
+        }
   
-      //   // console.log(
-      //   //   this.$store.getters.getComments.data.find(
-      //   //     (comment) => comment.id === id
-      //   //   )
-      //   // )
-      //   // this.comments
-      //   //   .find((comment) => comment.id === id)
-      //   //   .replies.unshift(reply.data.data)
-      // },
+        // console.log(
+        //   this.$store.getters.getComments.data.find(
+        //     (comment) => comment.id === id
+        //   )
+        // )
+        // this.comments
+        //   .find((comment) => comment.id === id)
+        //   .replies.unshift(reply.data.data)
+      },
       clickTextField() {
         if (!this.isLoggedIn) return this.$router.push('/signin')
       },

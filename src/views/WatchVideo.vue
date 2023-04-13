@@ -385,6 +385,51 @@
                       </div>
                     </infinite-loading>
                   </v-tab-item>
+                  <v-tab-item>
+                    <v-slide-item
+                      v-for="(video, i) in loading ? 12 : watchedVideos"
+                      :key="i"
+                      class="mb-5"
+                    >
+                      <v-skeleton-loader
+                        class="mx-auto"
+                        type="list-item-avatar-three-line"
+                        :loading="loading"
+                        tile
+                        large
+                      >
+                        <recommend-video-card
+                          :video="video"
+                        ></recommend-video-card>
+                      </v-skeleton-loader>
+                    </v-slide-item>
+                    <infinite-loading :identifier="infiniteId" @infinite="getWatchedVideos">
+                      <div slot="spinner">
+                        <v-progress-circular
+                          indeterminate
+                          color="red"
+                        ></v-progress-circular>
+                      </div>
+                      <div slot="no-results"></div>
+                      <span slot="no-more"></span>
+                      <div slot="error" slot-scope="{ trigger }">
+                        <v-alert prominent type="error">
+                          <v-row align="center">
+                            <v-col class="grow">
+                              <div class="title">Error!</div>
+                              <div>
+                                Something went wrong, but don’t fret — let’s give it
+                                another shot.
+                              </div>
+                            </v-col>
+                            <v-col class="shrink">
+                              <v-btn @click="trigger">Take action</v-btn>
+                            </v-col>
+                          </v-row>
+                        </v-alert>
+                      </div>
+                    </infinite-loading>
+                  </v-tab-item>
                 </v-tabs-items>
                 
                 <!-- <v-col cols="12" sm="12" md="12" lg="12"> -->
@@ -440,9 +485,11 @@
       videoId: '',
       videos: [],
       singerVideos: [],
+      watchedVideos: [],
       playlist: {},
       page: 1,
       singerPage: 1,
+      watchedPage: 1,
       infiniteId: +new Date(),
       truncate: true,
       signinDialog: false,
@@ -549,6 +596,43 @@
             $state.loaded()
           }
   
+          this.loaded = true
+        } else {
+          if ($state) {
+            $state.complete()
+          }
+        }
+      },
+      async getWatchedVideos($state) {
+        this.loading = true
+  
+        const videos = await VideoService.getWatchedVideos({
+          user_id: this.getCurrentUser.id,
+          page: this.watchedPage
+        })
+          .catch((err) => {
+            console.log(err)
+            this.errored = true
+          })
+          .finally(() => (this.loading = false))
+      
+        if (typeof videos === 'undefined') return
+        const cleanVideos = videos.data.filter(
+          (obj, index) => 
+          videos.data.findIndex((item) => item.id === obj.id) === index
+        )
+        console.log("watched videos")
+        console.log(cleanVideos)
+        // this.singerVideos = videos.data
+        if (videos.data.length) {
+          this.watchedPage += 1
+      
+          this.watchedVideos.push(...cleanVideos)
+          // console.log(this.videos)
+          if ($state) {
+            $state.loaded()
+          }
+      
           this.loaded = true
         } else {
           if ($state) {
@@ -768,7 +852,9 @@
       this.infiniteId += 1
       console.log('to params' + to.params.id)
       this.getVideo(to.params.id)
-      this.updateViews(to.params.id)
+      if (this.isLoggedIn) {
+        this.updateViews(to.params.id)
+      }
       if (to.params.playlist_id) {
         this.getPlaylistVideos(to.params.playlist_id)
       }

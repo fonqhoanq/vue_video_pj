@@ -21,6 +21,11 @@ export default {
       params
     })
   },
+  getWatchedVideos(params) {
+    return Api().get('videos/watched', {
+      params
+    })
+  },
   getById(id) {
     return Api().get(`videos/${id}`)
   },
