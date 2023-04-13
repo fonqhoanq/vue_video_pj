@@ -80,8 +80,8 @@
   
         if (!comment) return
         this.comment = ''
-        comment.data.replies = []
-        comment.data.userId = this.getCurrentUser.id
+        // comment.data.replies = []
+        // comment.data.userId = this.getCurrentUser.id
   
         this.$store.dispatch('addComment', comment.data)
         this.$emit('videoCommentLength')

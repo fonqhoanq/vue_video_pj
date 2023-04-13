@@ -19,7 +19,7 @@ export default {
     },
     addComment(state, comment) {
       // console.log('hello', comment)
-      state.comments.data.unshift(comment)
+      state.comments.unshift(comment)
       // console.log(state.comments.data)
     }
   },
