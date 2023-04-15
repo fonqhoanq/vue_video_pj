@@ -96,26 +96,25 @@
             @click="changeVideoType('R&B')"
           >R&B</v-btn>
         </div>
-        <div v-if="isLoggedIn">
+        <div v-if="isLoggedIn && musicType === ''">
           <h3 class="headline font-weight-medium">Playlists</h3>
-          <v-row>
-            <v-col
-              cols="12"
-              sm="6"
-              md="4"
-              lg="3"
+          <v-slide-group class="pa-4" multiple show-arrows>
+            <v-slide-item
               v-for="(playlist, i) in loading ? 12 : playlists"
               :key="i"
-              class="mx-xs-auto"
             >
-              <v-skeleton-loader type="card-avatar" :loading="loading">
+              <v-skeleton-loader
+                type="card-avatar" 
+                :loading="loading"
+                class="mr-1"
+              >
                 <playlist-card
                   :card="{ maxWidth: 350 }"
                   :playlist="playlist"
                 ></playlist-card>
               </v-skeleton-loader>
-            </v-col>
-          </v-row>
+            </v-slide-item>
+          </v-slide-group>
         </div>
         <h3 class="headline font-weight-medium">Recommended</h3>
         <v-row>

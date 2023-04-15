@@ -75,6 +75,21 @@
                   v-model="formData.category"
                 ></v-select>
               </ValidationProvider>
+              <ValidationProvider
+                v-slot="{ errors }"
+                name="HashTag"
+                rules="required"
+              >
+                <v-select
+                  :items="hashTagTitles"
+                  :error-messages="errors"
+                  filled
+                  label="Hash Tags"
+                  multiple
+                  v-model="formData.hashTags"
+                  :loading="hashTagLoading"
+                ></v-select>
+              </ValidationProvider>
 
               <div class="mt-6 d-flex justify-space-between">
                 <v-btn
@@ -119,6 +134,7 @@ import myUpload from 'vue-image-crop-upload'
 import VideoService from '@/services/VideoService'
 import CategoryService from '@/services/CategoryService'
 import { mapGetters } from 'vuex'
+import HashTagService from '@/services/HashTagService'
 
 export default {
   name: 'DetailsVideo',
@@ -128,6 +144,7 @@ export default {
       inputLoading: false,
       submitLoading: false,
       categoryLoading: false,
+      hashTagLoading: false,
       value: 0,
       show: false,
       rules: [
@@ -138,6 +155,8 @@ export default {
       ],
       categoriesTitles: [],
       categories: [],
+      hashTagTitles: [],
+      hashTags: [],
       visibility: ['Public', 'Private'],
       formData: {
         title: '',
@@ -168,12 +187,17 @@ export default {
 
       if (!video) return
       video = video.data
+      console.log('video')
+      console.log(video)
       this.url = `${this.getUrl}videos/${video.id}/thumbnails`
 
       this.formData.title = video.title
       this.formData.description = video.description
       this.formData.visibility = video.public ? 'Public' : 'Private'
       this.formData.category = video.category_title
+      this.formData.hashTags = video.hashTags.map(function(item) {
+        return item['title'];
+      });
       this.imgDataUrl = `${this.getUrl}${video.thumbnails}`
     },
     async submit() {
@@ -182,11 +206,17 @@ export default {
       this.formData.category = this.categories.find(
         (category) => category.title === this.formData.category
       ).id
+      this.formData.hashTags = this.formData.hashTags.map((hashtag) => {
+          return this.hashTags.find((hashTag) => hashTag.title === hashtag).id
+        })
       const video = await VideoService.updateVideo(this.$route.params.id, {
-        title: this.formData.title,
-        description: this.formData.description,
-        category_id: this.formData.category,
-        public: this.isPublic()
+        video: {
+          title: this.formData.title,
+          description: this.formData.description,
+          category_id: this.formData.category,
+          public: this.isPublic(),
+          hash_tags: this.formData.hashTags
+        }
       })
         .catch((err) => {
           console.log(err)
@@ -213,6 +243,18 @@ export default {
       console.log("this categories:")
       console.log(this.categories)
     },
+    async getHashTags() {
+      this.hashTagLoading = true
+      const hashTags = await HashTagService.getAll()
+        .catch((err) => {
+          console.log(err)
+        })
+        .finally(() => (this.hashTagLoading = false))
+      this.hashTagTitles = hashTags.data.map((hashTag) => {
+        return hashTag.title
+      })
+      this.hashTags = hashTags.data
+    },
     toggleShow() {
       this.show = !this.show
     },
@@ -237,6 +279,7 @@ export default {
   mounted() {
     this.getVideo()
     this.getCategories()
+    this.getHashTags()
   }
 }
 </script>
