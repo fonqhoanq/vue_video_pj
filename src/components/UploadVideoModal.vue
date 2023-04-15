@@ -148,6 +148,22 @@
                       :loading="categoryLoading"
                     ></v-select>
                   </ValidationProvider>
+
+                  <ValidationProvider
+                    v-slot="{ errors }"
+                    name="HashTag"
+                    rules="required"
+                  >
+                    <v-select
+                      :items="hashTagTitles"
+                      :error-messages="errors"
+                      filled
+                      label="Hash Tags"
+                      multiple
+                      v-model="formData.hashTags"
+                      :loading="hashTagLoading"
+                    ></v-select>
+                  </ValidationProvider>
   
                   <div class="mt-6 d-flex justify-space-between">
                     <v-btn
@@ -215,6 +231,7 @@
   import myUpload from "/home/dell/vue_video_pj/node_modules/vue-image-crop-upload/upload-2.vue";
   import VideoService from "@/services/VideoService";
   import { mapGetters } from 'vuex'
+  import HashTagService from '@/services/HashTagService'
   // import CategoryService from "@/services/CategoryService";
   export default {
     name: "UploadModal",
@@ -226,6 +243,7 @@
         uploading: false,
         submitLoading: false,
         categoryLoading: false,
+        hashTagLoading: false,
         interval: {},
         value: 0,
         show: false,
@@ -238,6 +256,9 @@
         categoriesTitles: ["Pop", "Rock", "Country Music", "Electronic", "Funk", "Hip hop", "Jazz", "Latin", "Soul", "R&B"],
         categories: ["Pop", "Rock", "Country Music", "Electronic", "Funk", "Hip hop", "Jazz", "Latin", "Soul", "R&B"],
         visibilty: ["Private", "Public"],
+        selectedHashTags: [],
+        hashTagTitles: [],
+        hashTags: [],
         selectedFile: [],
         formData: {
           id: "",
@@ -301,14 +322,16 @@
       },
       async submit() {
         this.submitLoading = true;
-      
-  
+        this.formData.hashTags = this.formData.hashTags.map((hashtag) => {
+          return this.hashTags.find((hashTag) => hashTag.title === hashtag).id
+        })
         const video = await VideoService.updateVideo(this.formData.id,{
           video: {
             title: this.formData.title,
             description: this.formData.description,
             category_id: this.categoryId(),
-            public: this.isPublic()
+            public: this.isPublic(),
+            hash_tags: this.formData.hashTags
           }
         })
           .catch((err) => {
@@ -345,6 +368,19 @@
       //   });
       //   this.categories = categories.data.data;
       // },
+      async getHashTags() {
+        this.hashTagLoading = true
+        const hashTags = await HashTagService.getAll()
+          .catch((err) => {
+            console.log(err)
+          })
+          .finally(() => (this.hashTagLoading = false))
+
+        this.hashTagTitles = hashTags.data.map((hashTag) => {
+          return hashTag.title
+        })
+        this.hashTags = hashTags.data
+      },
       closeModal() {
         this.$emit("closeDialog");
       },
@@ -383,9 +419,10 @@
     components: {
       myUpload,
     },
-    // mounted() {
-    //   this.getCategories();
-    // },
+    mounted() {
+      // this.getCategories();
+      this.getHashTags()
+    },
   };
   </script>
   
