@@ -47,9 +47,10 @@
                 ></v-textarea>
               </ValidationProvider>
               <ValidationProvider
+                v-if="formData.visibility !== 'Schedule'"
                 v-slot="{ errors }"
                 name="Visibilty"
-                rules="required|oneOf:Private,Public"
+                rules="required|oneOf:Private,Public,Schedule"
               >
                 <v-select
                   :loading="inputLoading"
@@ -60,6 +61,15 @@
                   :value="formData.visibility"
                   v-model="formData.visibility"
                 ></v-select>
+              </ValidationProvider>
+              <ValidationProvider
+                v-if="formData.visibility === 'Schedule'"
+                name="Schedule At"
+              >
+                <div class="dateWrap">
+                  <p class="title">Schedule At</p>
+                  <date-time-picker class="mb-4 ml-2 date" v-model="formData.upload_video_at" :model-value="formData.upload_video_at" @update-value="updateTime" />                  
+                </div>
               </ValidationProvider>
               <ValidationProvider
                 v-slot="{ errors }"
@@ -135,6 +145,7 @@ import VideoService from '@/services/VideoService'
 import CategoryService from '@/services/CategoryService'
 import { mapGetters } from 'vuex'
 import HashTagService from '@/services/HashTagService'
+import DateTimePicker from '@/components/parts/DateTimePicker'
 
 export default {
   name: 'DetailsVideo',
@@ -193,8 +204,9 @@ export default {
 
       this.formData.title = video.title
       this.formData.description = video.description
-      this.formData.visibility = video.public ? 'Public' : 'Private'
+      this.formData.visibility = this.convertToVisibility(video.status)
       this.formData.category = video.category_title
+      this.formData.upload_video_at = video.upload_video_at
       this.formData.hashTags = video.hashTags.map(function(item) {
         return item['title'];
       });
@@ -209,14 +221,18 @@ export default {
       this.formData.hashTags = this.formData.hashTags.map((hashtag) => {
           return this.hashTags.find((hashTag) => hashTag.title === hashtag).id
         })
+      console.log('data')
+      console.log(this.formData.upload_video_at)
       const video = await VideoService.updateVideo(this.$route.params.id, {
         video: {
           title: this.formData.title,
           description: this.formData.description,
           category_id: this.formData.category,
-          public: this.isPublic(),
-          hash_tags: this.formData.hashTags
-        }
+          video_status: this.convertStatus(this.formData.visibility),
+          hash_tags: this.formData.hashTags,
+        },
+        upload_video_at: this.formData.upload_video_at
+
       })
         .catch((err) => {
           console.log(err)
@@ -266,15 +282,30 @@ export default {
     categoryId() {
       return this.categories.indexOf(this.formData.category)
     },
-    isPublic() {
-      if (this.formData.visibility === 'Public') {
-        return true
-      } 
-      return false
+    convertStatus(name) {
+      if (name === 'Public') {
+        return 'is_public'
+      } else if (name === 'Private') {
+        return 'unpublic'
+      } else {
+        return 'scheduling'
+      }
+    },
+    convertToVisibility (name) {
+      if (name === 'is_public') {
+        return 'Public'
+      } else if (name === 'unpublic') {
+        return 'Private'
+      } else {
+        return 'Schedule'
+      }
+    },
+    updateTime(value) {
+      this.formData.upload_video_at = value
     }
   },
   components: {
-    myUpload
+    myUpload, DateTimePicker
   },
   mounted() {
     this.getVideo()
@@ -288,4 +319,15 @@ export default {
 .card {
   background: #f9f9f9 !important;
 }
+.dateWrap {
+  background: #f0f0f0;
+  .title {
+    font-size: 12px !important;
+    font-weight: 350;
+    margin: 0 0 0 10px !important;
+  }
+  .date {
+    color: #21375a !important;
+  }
+ }
 </style>
