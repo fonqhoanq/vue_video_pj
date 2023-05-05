@@ -17,6 +17,26 @@
       </v-alert>
 
       <main v-else>
+        <div v-if="isLoggedIn && musicType === ''">
+          <h3 class="headline font-weight-medium">Playlists</h3>
+          <v-slide-group class="pa-4" multiple show-arrows>
+            <v-slide-item
+              v-for="(playlist, i) in loading ? 12 : playlists"
+              :key="i"
+            >
+              <v-skeleton-loader
+                type="card-avatar" 
+                :loading="loading"
+                class="mr-1"
+              >
+                <playlist-card
+                  :card="{ maxWidth: 350 }"
+                  :playlist="playlist"
+                ></playlist-card>
+              </v-skeleton-loader>
+            </v-slide-item>
+          </v-slide-group>
+        </div>
         <div class="wrapBtn">
           <v-btn
             :class="[
@@ -95,26 +115,6 @@
               'mr-3 mb-3']"
             @click="changeVideoType('R&B')"
           >R&B</v-btn>
-        </div>
-        <div v-if="isLoggedIn && musicType === ''">
-          <h3 class="headline font-weight-medium">Playlists</h3>
-          <v-slide-group class="pa-4" multiple show-arrows>
-            <v-slide-item
-              v-for="(playlist, i) in loading ? 12 : playlists"
-              :key="i"
-            >
-              <v-skeleton-loader
-                type="card-avatar" 
-                :loading="loading"
-                class="mr-1"
-              >
-                <playlist-card
-                  :card="{ maxWidth: 350 }"
-                  :playlist="playlist"
-                ></playlist-card>
-              </v-skeleton-loader>
-            </v-slide-item>
-          </v-slide-group>
         </div>
         <h3 class="headline font-weight-medium">Recommended</h3>
         <v-row>

@@ -123,17 +123,20 @@
                   </ValidationProvider>
                   <ValidationProvider
                     v-slot="{ errors }"
-                    name="Visibilty"
+                    name="visibility"
                     rules="required|min:3"
                   >
                     <v-select
-                      :items="visibilty"
+                      :items="visibility"
                       :error-messages="errors"
                       filled
-                      label="Visibilty"
-                      v-model="formData.visibilty"
+                      label="visibility"
+                      v-model="formData.visibility"
                     ></v-select>
                   </ValidationProvider>
+                  <div v-if="formData.visibility === 'Schedule'">
+                    <date-time-picker v-model="formData.upload_video_at" @update-value="updateTime" />
+                  </div>
                   <ValidationProvider
                     v-slot="{ errors }"
                     name="Cateogry"
@@ -232,6 +235,8 @@
   import VideoService from "@/services/VideoService";
   import { mapGetters } from 'vuex'
   import HashTagService from '@/services/HashTagService'
+  import DateTimePicker from '@/components/parts/DateTimePicker'
+
   // import CategoryService from "@/services/CategoryService";
   export default {
     name: "UploadModal",
@@ -255,7 +260,7 @@
         ],
         categoriesTitles: ["Pop", "Rock", "Country Music", "Electronic", "Funk", "Hip hop", "Jazz", "Latin", "Soul", "R&B"],
         categories: ["Pop", "Rock", "Country Music", "Electronic", "Funk", "Hip hop", "Jazz", "Latin", "Soul", "R&B"],
-        visibilty: ["Private", "Public"],
+        visibility: ["Private", "Public", "Schedule"],
         selectedHashTags: [],
         hashTagTitles: [],
         hashTags: [],
@@ -265,7 +270,7 @@
           title: "",
           description: "",
           category: "",
-          visibilty: "",
+          visibility: "",
         },
         imgDataUrl: "",
         url: "",
@@ -330,9 +335,10 @@
             title: this.formData.title,
             description: this.formData.description,
             category_id: this.categoryId(),
-            public: this.isPublic(),
+            video_status: this.convertStatus(),
             hash_tags: this.formData.hashTags
-          }
+          },
+          upload_video_at: this.formData.upload_video_at
         })
           .catch((err) => {
             console.log(err);
@@ -347,7 +353,7 @@
         this.formData.title = '';
         this.formData.description = '';
         this.formData.category = '';
-        this.formData.visibilty = "";
+        this.formData.visibility = "";
         this.imgDataUrl = "";
         this.selectedFile = [];
         this.closeModal();
@@ -409,21 +415,27 @@
       categoryId() {
         return this.categories.indexOf(this.formData.category)
       },
-      isPublic() {
-        if (this.formData.visibilty === 'Public') {
-          return true
-        } 
-        return false
+      convertStatus() {
+       if (this.formData.visibility === 'Public') {
+         return 'is_public'
+       } else if (this.formData.visibility === 'Private') {
+         return 'unpublic'
+       } else {
+         return 'scheduling'
+       }
+      },
+      updateTime(value) {
+      this.formData.upload_video_at = value
       }
     },
     components: {
-      myUpload,
+      myUpload, DateTimePicker
     },
     mounted() {
       // this.getCategories();
       this.getHashTags()
     },
-  };
+  }
   </script>
   
   <style lang="scss">
