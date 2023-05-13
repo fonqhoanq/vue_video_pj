@@ -405,11 +405,11 @@
             //   icon: 'mdi-play-box-outline'
             // },
   
-            // {
-            //   title: 'Watch later',
-            //   link: '#wl',
-            //   icon: 'mdi-clock'
-            // },
+            {
+              title: 'Watch later',
+              link: '/watch-later',
+              icon: 'mdi-clock'
+            },
   
             {
               title: 'Liked videos',

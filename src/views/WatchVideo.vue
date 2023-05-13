@@ -81,6 +81,20 @@
                             {{ video.dislikes }}</v-btn
                           >
                           <v-btn
+                            v-if="!isWatchLater"
+                            @click="switchToWatchLater"
+                            text
+                            class="grey--text text--darken-1"
+                          ><v-icon>mdi-playlist-plus</v-icon> Watch later</v-btn
+                          >
+                          <v-btn
+                            v-else
+                            @click="switchToWatchLater"
+                            text
+                            class="grey--text text--darken-1"
+                          ><v-icon>mdi-playlist-remove</v-icon> Remove from watch later</v-btn
+                          >
+                          <v-btn
                             :href="`${video.url}`"
                             text
                             class="grey--text text--darken-1"
@@ -232,6 +246,55 @@
               </v-col>
   
               <v-col cols="12" sm="12" md="3" lg="3">
+                <template v-if="watchLaterVideos.length > 0">
+                  <v-card>
+                    <v-list-item>
+                        <v-icon>mdi-clock</v-icon>
+                      <v-list-item-title
+                        class="mt-2 ml-2"
+                      >
+                        Watch Later
+                      </v-list-item-title>
+                    </v-list-item>
+                    <v-list
+                      style="max-height: 500px"
+                      class="overflow-y-auto"
+                    >
+                    <div
+                    v-for="(watchLaterVideo, i) in watchLaterVideos"
+                    :key="i"
+                    >
+                      <v-list-item
+                        :class="[
+                          {'playing': watchLaterVideo.video.id === video.id}
+                          ]"
+                        @click="handlePlayList(watchLaterVideo.video.id)"
+                      >
+                        <v-list-item-content class="mr-2">
+                          <div class="d-flex">
+                            <v-img
+                              height="60"
+                              width="100"
+                              class="img_url"
+                              :src="`${getUrl}${watchLaterVideo.video.thumbnails}`"
+                            >
+                            </v-img>
+                            <div class="content">
+                              <v-list-item-title class="title">{{
+                                watchLaterVideo.video.title
+                              }}</v-list-item-title>
+                              <v-list-item-subtitle>
+                                {{ watchLaterVideo.video.singer.channelName }}
+                              </v-list-item-subtitle>
+                            </div>
+                          </div>
+                        </v-list-item-content>
+                      </v-list-item>
+                    </div>
+        
+                    </v-list>
+                  </v-card>
+                </template>
                 <template v-if="playlist">
                   <v-card>
                     <v-list-item>
@@ -446,7 +509,7 @@
         @closeModal="signinDialog = false"
       />
       <v-snackbar  :timeout="timeout" v-model="snackbar">
-        {{ subscribeMessage }}
+        {{ message }}
       </v-snackbar>
     </div>
   </template>
@@ -467,10 +530,10 @@
   import NavBar from '@/components/NavBar'
   import RecommendVideoCard from '@/components/RecommendVideoCard'
   import PlaylistService from '@/services/PlaylistService'
-
+  import WatchLaterService from '@/services/WatchLaterService'
   export default {
     data: () => ({
-      subscribeMessage: '',
+      message: '',
       snackbar: false,
       timeout: 4000,
       loading: false,
@@ -478,6 +541,8 @@
       errored: false,
       videoLoading: true,
       subscribed: false,
+      isWatchLater: false,
+      watchLaterId: '',
       subscribeLoading: false,
       showSubBtn: true,
       feeling: '',
@@ -486,6 +551,7 @@
       videos: [],
       singerVideos: [],
       watchedVideos: [],
+      watchLaterVideos: [],
       playlist: {},
       page: 1,
       singerPage: 1,
@@ -521,6 +587,7 @@
           this.videoLoading = false
           this.checkSubscription(this.video.singer.id)
           this.checkFeeling(this.video.id)
+          this.checkWatchLater(this.video.id)
         }
         if (this.getCurrentUser && this.getCurrentUser.id === this.video.singer.id) {
           this.showSubBtn = false
@@ -751,6 +818,81 @@
   
         if (!feeling) return
       },
+      async checkWatchLater(id) {
+        if (!this.isLoggedIn) return
+  
+        this.loading = true
+        const watchLater = await WatchLaterService.checkWatchLater({ 
+          video_id: id,
+          user_id: this.getCurrentUser.id 
+         })
+          .catch((err) => {
+            console.log(err)
+          })
+          .finally(() => {
+            this.loading = false
+          })
+        console.log('watch later')
+        console.log(watchLater)
+        !watchLater ? this.isWatchLater = false : this.isWatchLater = true
+        if (this.isWatchLater) {
+          this.watchLaterId = watchLater.data[0].id
+        }
+        console.log('watch later id')
+        console.log(this.watchLaterId)
+      },
+      async switchToWatchLater() {
+        if (!this.isLoggedIn) {
+          this.signinDialog = true
+          this.details = {
+            title: 'Want to subscribe to this channel?',
+            text: 'Sign in to subscribe to this channel.'
+          }
+          return
+        }
+        this.isWatchLater = !this.isWatchLater
+        const watchLaterType = this.isWatchLater === true ? 'add' : 'remove'
+        if (watchLaterType === 'add') {
+          await WatchLaterService.createWatchLater({
+            video_id: this.video.id,
+            user_id: this.getCurrentUser.id
+          }).catch((err) => {
+            console.log(err)
+          }).finally(() => {
+            this.snackbar = true
+            this.message = 'Added to watch later!'
+            this.checkWatchLater(this.video.id)
+          })
+        } else {
+          await WatchLaterService.removeWatchLater(this.watchLaterId).catch((err) => {
+            console.log(err)
+          }).finally(() => {
+            this.snackbar = true
+            this.message = 'Removed from watch later!'
+          })
+        }
+
+        // if (!watchLater) return
+
+      },
+      async getWatchLaterVideos() {
+        this.loading = true
+        const videos = await WatchLaterService.getAll({
+          user_id: this.getCurrentUser.id
+        })
+          .catch((err) => {
+            console.log(err)
+            this.errored = true
+          })
+          .finally(() => {
+            this.loading = false
+          })
+        if (!videos) return
+        console.log("watched videos")
+        console.log(videos)
+        this.watchLaterVideos = videos.data
+        // this.singerVideos = videos.data
+      },
       async subscribe() {
         if (!this.isLoggedIn) {
           this.signinDialog = true
@@ -771,7 +913,7 @@
           .catch((err) => console.log(err))
           .finally(() => {
             this.subscribeLoading = false
-            this.subscribeMessage = subType === 'subscribe' ? 'Subscribe successfully!' : 'Ubsubscribe successfully!'
+            this.message = subType === 'subscribe' ? 'Subscribe successfully!' : 'Ubsubscribe successfully!'
             this.snackbar = true
           })
   
@@ -824,6 +966,15 @@
             playlist_id: this.playlist.id
           }
         })
+      },
+      handleWatchLater(id) {
+        this.$router.push({
+          name: 'WatchVideo',
+          params: {
+            id: id,
+            isWatchLaterList: true
+          }
+        })
       }
     },
     components: {
@@ -843,6 +994,9 @@
         if (this.$route.params.playlist_id) {
           this.getPlaylistVideos(this.$route.params.playlist_id)
         }
+        if (this.$route.params.isWatchLaterList) {
+          this.getWatchLaterVideos()
+        }
         this.updateViews(this.$route.params.id)
       }
     },
@@ -857,6 +1011,10 @@
       }
       if (to.params.playlist_id) {
         this.getPlaylistVideos(to.params.playlist_id)
+      }
+
+      if (to.params.isWatchLaterList) {
+        this.getWatchLaterVideos()
       }
       window.scroll(0, 0)
       next()

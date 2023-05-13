@@ -18,6 +18,7 @@ import TrendingVideos from '../views/TrendingVideo.vue'
 import SubscribedVideos from '../views/SubscribedVideo.vue'
 import SingerVideos from '../views/Singer/VideoView.vue'
 import DetailsVideo from '../views/Singer/DetailsVideo.vue'
+import WatchLaterVideos from '../views/WatchLaterVideo.vue'
 // import StudioNavBar from '../components/StudioNavBar.vue'
 Vue.use(VueRouter)
 
@@ -120,6 +121,11 @@ const routes = [
     path: '/subscriptions',
     name: SubscribedVideos,
     component: SubscribedVideos
+  },
+  {
+    path: '/watch-later',
+    name: 'WatchLaterVideos',
+    component: WatchLaterVideos
   }
 ]
 
