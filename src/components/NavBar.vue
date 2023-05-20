@@ -263,7 +263,8 @@
                 class="pl-3 py-4 subtitle-1 font-weight-bold text-uppercase"
                 >{{ parentItem.header }}</v-subheader
               >
-              <v-list-item
+              <template v-if="parentItem.header !== 'Own Playlists'">
+                <v-list-item
                 v-for="(item, i) in parentItem.header === 'Subscriptions'
                   ? items[2].pages.slice(0, channelLength)
                   : parentItem.pages"
@@ -311,6 +312,27 @@
                   }}</v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
+              </template>
+              <template v-if="parentItem.header === 'Own Playlists'">
+                <v-list-item
+                v-for="(item) in items[3].pages.slice(0, playlistLength)"
+                :key="item.title"
+                class="mb-0"
+                :to="'/own-playlists/' + item.id
+                "
+                exact
+                active-class="active-item"
+              >
+                <v-list-item-icon>
+                  <v-icon>mdi-playlist-music</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title class=" font-weight-medium subtitle-2">{{
+                    item.title
+                  }}</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+              </template>
   
               <v-btn
                 id="showBtn"
@@ -331,8 +353,29 @@
                   channelLength === 3
                     ? `Show ${items[2].pages.length - 3} more `
                     : 'Show less'
-                }}</v-btn
+                }}
+              </v-btn>
+              <v-btn
+                id="showBtn"
+                @click="morePlaylists"
+                v-if="
+                  parentItem.header === 'Own Playlists' &&
+                    isLoggedIn &&
+                    items[3].pages.length > 0
+                "
+                block
+                text
+                class="text-none"
               >
+                <v-icon>{{
+                  playlistLength === 3 ? 'mdi-chevron-down' : 'mdi-chevron-up'
+                }}</v-icon>
+                {{
+                  playlistLength === 3
+                    ? `Show ${items[3].pages.length - 3} more `
+                    : 'Show less'
+                }}
+              </v-btn>
   
               <v-divider
                 v-if="parentItem.header !== false"
@@ -364,7 +407,7 @@
   import HistoryService from '@/services/HistoryService'
   import NotificationService from '@/services/NotificationService'
   import moment from "moment";
-
+  import OwnPlaylistService from '@/services/OwnPlaylistService';
 
   export default {
     data: () => ({
@@ -444,6 +487,10 @@
           ]
         },
         {
+          header: 'Own Playlists',
+          pages: []
+        },
+        {
           header: 'MORE FROM VUETUBE',
           pages: [
             {
@@ -503,6 +550,7 @@
         { text: 'Test new features', link: '#' }
       ],
       channelLength: 0,
+      playlistLength: 0,
       searchText: '',
       runtimeTranscription_: '',
       lang_: "en-EN",
@@ -543,6 +591,16 @@
         this.items[2].pages = channels.data
         this.channelLength = 3
       },
+      async getOwnPlaylists() {
+        const params = {
+          user_id: this.getCurrentUser.id
+        }
+        const playlists = await OwnPlaylistService.getOwnPlaylists(params).catch(
+          (err) => console.log(err)
+        )
+        this.items[3].pages = playlists.data
+        this.playlistLength = 3
+      },
       async getNotifications() {
         const params = {
           user_id: this.getCurrentUser.id,
@@ -571,6 +629,11 @@
         if (this.channelLength === 3)
           this.channelLength = this.items[2].pages.length
         else this.channelLength = 3
+      },
+      morePlaylists() {
+        if (this.playlistLength === 3)
+          this.playlistLength = this.items[3].pages.length
+        else this.playlistLength = 3
       },
       signOut() {
         this.$store.dispatch('logoutUser')
@@ -633,6 +696,7 @@
       console.log("mounted:")
       console.log(this.getCurrentUser.avatarUrl)
       if (this.getCurrentUser) {
+        this.getOwnPlaylists()
         this.getNotifications()
         this.getSubscribedChannels()
       }

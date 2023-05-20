@@ -19,6 +19,7 @@ import SubscribedVideos from '../views/SubscribedVideo.vue'
 import SingerVideos from '../views/Singer/VideoView.vue'
 import DetailsVideo from '../views/Singer/DetailsVideo.vue'
 import WatchLaterVideos from '../views/WatchLaterVideo.vue'
+import OwnPlaylists from '../views/OwnPlaylistVideo.vue'
 // import StudioNavBar from '../components/StudioNavBar.vue'
 Vue.use(VueRouter)
 
@@ -126,6 +127,11 @@ const routes = [
     path: '/watch-later',
     name: 'WatchLaterVideos',
     component: WatchLaterVideos
+  },
+  {
+    path: '/own-playlists/:id',
+    name: 'OwnPlaylists',
+    component: OwnPlaylists
   }
 ]
 

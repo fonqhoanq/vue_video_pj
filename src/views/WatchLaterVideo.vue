@@ -14,7 +14,7 @@
           lg="9"
           class="pt-8 pl-8"
         >
-          <h1 class="title font-weight-medium pb-5">{{ historyType }}</h1>
+          <h1 class="title font-weight-medium pb-5">Watch later</h1>
             <template v-if="!watchLaterVideos && !loading">
               <p class="text-center body-1">No watch history yet.</p>
             </template>
@@ -202,8 +202,6 @@ export default {
     snackbar: false,
     timeout: 4000,
     deleteMessage: '',
-    items: ['Watch History', 'Search History'],
-    historyType: 'Watch History',
     watchLaterVideos: [],
     page: 1,
     infiniteId: +new Date(),
@@ -250,38 +248,6 @@ export default {
         }
       }
     },
-    // async clearHistory() {
-    //   this.clearLoading = true
-
-    //   const type = this.historyType === 'Watch History' ? 'watch' : 'search'
-
-    //   await HistoryService.deleteAll(type)
-    //     .catch((err) => {
-    //       console.log(err)
-    //     })
-    //     .finally(() => {
-    //       this.histories = this.histories.filter(
-    //         (history) => history.type !== type
-    //       )
-
-    //       this.clearLoading = false
-    //       this.deleteMessage = `${this.historyType} Cleared Successfully`
-    //       this.snackbar = true
-    //     })
-    // },
-    // async deleteHistory(id) {
-    //   this.histories = this.histories.filter(
-    //     (history) => history.id.toString() !== id.toString()
-    //   )
-    //   await HistoryService.deleteById(id)
-    //     .catch((err) => {
-    //       console.log(err)
-    //     })
-    //     .finally(() => {
-    //       this.deleteMessage = 'History Deleted Successfully'
-    //       this.snackbar = true
-    //     })
-    // },
     async deleteWatchLaterVideo(id) {
       await WatchLaterService.removeWatchLater(id)
         .catch((err) => {
@@ -294,12 +260,6 @@ export default {
           this.deleteMessage = 'Watch Later Video Deleted Successfully'
           this.snackbar = true
         })
-    },
-    clickItem(item) {
-      this.historyType = item
-      this.page = 1
-      this.histories = []
-      this.infiniteId += 1
     },
     dateFormatter(date) {
       return moment(date).fromNow()
@@ -347,7 +307,7 @@ export default {
 }
 .content {
   display: flex;
-  justify-content: start;
+  justify-content: flex-start;
 }
 .wrapBtn {
   display: flex;

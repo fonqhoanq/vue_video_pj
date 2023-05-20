@@ -1,11 +1,10 @@
 <template>
     <v-card
-      class="content-bg card mx-auto card-action"
+      class="content-bg card mx-auto"
       :max-width="card.maxWidth"
       flat
       tile
-      router
-      :to="`/watch/${video.id}`"
+      @click="playVideo(video)"
     >
       <v-img
         class="img-video"
@@ -30,12 +29,47 @@
           </v-list-item>
         </v-col>
         <v-col>
-          <v-card-title
-            class="pl-2 pt-3 subtitle-1 font-weight-bold"
-            style="line-height: 1.2rem"
-          >
-            {{ video.title }}
-          </v-card-title>
+          <div class="wrapTitle">
+            <v-card-title
+              class="pl-2 pt-3 subtitle-1 font-weight-bold"
+              style="line-height: 1.2rem"
+            >
+              {{ video.title }}
+            </v-card-title>
+            <v-menu offset-y left>
+              <template v-slot:activator="{ on }">
+                <v-btn class="btnDot" text v-on="on">
+                  <v-icon>mdi-dots-vertical</v-icon>
+                </v-btn>
+              </template>
+            
+              <v-card>  
+                <v-list>
+                  <v-list-item
+                    @click="showSavedPlaylistDialog"
+                  >
+                    <v-list-item-icon>
+                      <v-icon>mdi-playlist-plus</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-title>Add to playlist</v-list-item-title>
+                  </v-list-item>
+                  <v-list-item router to="/studio">
+                    <v-list-item-icon>
+                      <v-icon>mdi-block-helper</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-title>Report this video</v-list-item-title>
+                  </v-list-item>
+                  <v-list-item>
+                    <v-list-item-icon>
+                      <v-icon>mdi-clock</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-title>Add to watch later</v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-card>
+            </v-menu>
+          </div>
+
   
           <v-card-subtitle class="pl-2 pb-0">
             {{ video.singer.channelName }}
@@ -78,6 +112,12 @@
       dateFormatter(date) {
         return moment(date).fromNow();
       },
+      playVideo(video) {
+        this.$router.push(`/watch/${video.id}`);
+      },
+      showSavedPlaylistDialog() {
+        this.$emit('openPlaylistDialog')
+      },
     },
   };
 </script>
@@ -98,6 +138,22 @@
 .img-video {
   border: 1px;
   border-radius: 10px 10px 10px 10px !important;
+}
+.wrapTitle {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  // align-items: center;
+  .btnDot {
+    position: absolute;
+    top: 0;
+    right: -20px;
+    border-radius: 30%;
+    max-width: 30px !important;
+    min-width: none !important;
+    padding: 0 !important;
+    // max-height: 30px;
+  }
 }
 </style>
   

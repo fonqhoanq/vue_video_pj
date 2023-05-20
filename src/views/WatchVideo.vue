@@ -246,6 +246,54 @@
               </v-col>
   
               <v-col cols="12" sm="12" md="3" lg="3">
+                <template v-if="ownPlaylist.own_playlist_videos.length > 0">
+                  <v-card>
+                    <v-list-item>
+                      <v-list-item-title
+                      class="mt-2 ml-2"
+                    >
+                      {{ ownPlaylist.title }}
+                    </v-list-item-title>
+                    </v-list-item>
+                    <v-list
+                      style="max-height: 500px"
+                      class="overflow-y-auto"
+                    >
+                    <div
+                    v-for="(ownPlaylist, i) in ownPlaylist.own_playlist_videos"
+                    :key="i"
+                    >
+                      <v-list-item
+                        :class="[
+                          {'playing': ownPlaylist.video.id === video.id}
+                          ]"
+                        @click="handlePlayList(ownPlaylist.video.id)"
+                      >
+                        <v-list-item-content class="mr-2">
+                          <div class="d-flex">
+                            <v-img
+                              height="60"
+                              width="100"
+                              class="img_url"
+                              :src="`${getUrl}${ownPlaylist.video.thumbnails}`"
+                            >
+                            </v-img>
+                            <div class="content">
+                              <v-list-item-title class="title">{{
+                                ownPlaylist.video.title
+                              }}</v-list-item-title>
+                              <v-list-item-subtitle>
+                                {{ ownPlaylist.video.singer.channelName }}
+                              </v-list-item-subtitle>
+                            </div>
+                          </div>
+                        </v-list-item-content>
+                      </v-list-item>
+                    </div>
+        
+                    </v-list>
+                  </v-card>
+                </template>
                 <template v-if="watchLaterVideos.length > 0">
                   <v-card>
                     <v-list-item>
@@ -523,7 +571,7 @@
   import SubscriptionService from '@/services/SubscriptionService'
   import FeelingService from '@/services/FeelingService'
   import HistoryService from '@/services/HistoryService'
-  
+  import OwnPlaylistService from '@/services/OwnPlaylistService'
   import SigninModal from '@/components/SigninModal'
   import AddComment from '@/components/comments/AddComment'
   import CommentList from '@/components/comments/CommentList'
@@ -552,6 +600,7 @@
       singerVideos: [],
       watchedVideos: [],
       watchLaterVideos: [],
+      ownPlaylist: [],
       playlist: {},
       page: 1,
       singerPage: 1,
@@ -834,7 +883,7 @@
           })
         console.log('watch later')
         console.log(watchLater)
-        !watchLater ? this.isWatchLater = false : this.isWatchLater = true
+        watchLater.data.length == 0 ? this.isWatchLater = false : this.isWatchLater = true
         if (this.isWatchLater) {
           this.watchLaterId = watchLater.data[0].id
         }
@@ -892,6 +941,21 @@
         console.log(videos)
         this.watchLaterVideos = videos.data
         // this.singerVideos = videos.data
+      },
+      async getOwnPlaylist(id) {
+        this.loading = true
+        const ownPlaylist = await OwnPlaylistService.getPlaylistVideoById(id)
+          .catch((err) => {
+            console.log(err)
+            this.errored = true
+          })
+          .finally(() => {
+            this.loading = false
+          })
+        if (!ownPlaylist) return
+        console.log('own playlist')
+        console.log(ownPlaylist)
+        this.ownPlaylist = ownPlaylist.data
       },
       async subscribe() {
         if (!this.isLoggedIn) {
@@ -997,6 +1061,9 @@
         if (this.$route.params.isWatchLaterList) {
           this.getWatchLaterVideos()
         }
+        if (this.$route.params.isWatchOwnPlayList) {
+          this.getOwnPlaylist(this.$route.params.own_playlist_id)
+        }
         this.updateViews(this.$route.params.id)
       }
     },
@@ -1015,6 +1082,9 @@
 
       if (to.params.isWatchLaterList) {
         this.getWatchLaterVideos()
+      }
+      if (to.params.isWatchOwnPlayList) {
+        this.getOwnPlaylist(to.params.own_playlist_id)
       }
       window.scroll(0, 0)
       next()
