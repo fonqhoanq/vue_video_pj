@@ -16,6 +16,11 @@ export default {
       params
     })
   },
+  getRecommendVideosForPlaylist(params) {
+    return Api().get('videos/recommend_for_playlist', {
+      params
+    })
+  },
   getTrendingVideo(params) {
     return Api().get('videos/trending', {
       params

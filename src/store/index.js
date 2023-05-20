@@ -4,6 +4,7 @@ import Vuex from 'vuex'
 import auth from './modules/auth'
 import comment from './modules/comment'
 import singerauth from './modules/singerauth'
+import ownplaylist from './modules/ownplaylist'
 import createPersistedState from "vuex-persistedstate";
 Vue.use(Vuex)
 
@@ -61,7 +62,7 @@ export default new Vuex.Store({
     //   localStorage.removeItem('user')
     // }
   },
-  modules: { auth, comment, singerauth },
+  modules: { auth, comment, singerauth, ownplaylist },
   plugins: [createPersistedState({
     paths: ['user', 'singer']
   })]

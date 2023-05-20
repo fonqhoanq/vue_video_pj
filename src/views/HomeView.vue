@@ -132,6 +132,7 @@
                 :card="{ maxWidth: 350 }"
                 :video="video"
                 :channel="video.singer"
+                v-on:openPlaylistDialog="handleShowSavedPlaylistDialog(video)"
               ></video-card>
             </v-skeleton-loader>
           </v-col>
@@ -169,7 +170,19 @@
         </v-row>
       </main>
     </v-container>
+    <saved-playlist-modal
+      :video="currentVideo"
+      :check-playlists="checkPlaylists"
+      :open-dialog="showSavedPlaylistDialog"
+      v-on:closeDialog="showSavedPlaylistDialog = false"
+      v-on:openSnackbar="snackbar = true"
+    >
+    </saved-playlist-modal>
+    <v-snackbar  :timeout="timeout" v-model="snackbar">
+        {{ createPlaylistMessage }}
+      </v-snackbar>
   </div>
+
 </template>
 
 <script>
@@ -181,15 +194,23 @@ import VideoCard from '@/components/VideoCard'
 import VideoService from '@/services/VideoService'
 import NavBar from '@/components/NavBar'
 import PlaylistCard from '@/components/PlaylistCard.vue'
+import SavedPlaylistModal from '@/components/SavedPlaylistModal.vue'
+import OwnPlaylistService from '@/services/OwnPlaylistService'
 export default {
   name: 'HomeView',
   data: () => ({
     loading: false,
     loaded: false,
     errored: false,
+    timeout: 4000,
     show: false,
+    snackbar: false,
+    showSavedPlaylistDialog: false,
+    createPlaylistMessage: 'Create playlist successfully!',
     videos: [],
+    currentVideo: {},
     playlists: [],
+    checkPlaylists: [],
     page: 1,
     musicType: ''
   }),
@@ -264,7 +285,20 @@ export default {
       this.page = 1
       this.videos = []
       this.getVideos()
-    }
+    },
+    handleShowSavedPlaylistDialog(video) {
+      this.currentVideo = video
+      this.showSavedPlaylistDialog = true
+      this.checkVideoPlaylist(video)
+    },
+    async checkVideoPlaylist(video) {
+      const playlists = await OwnPlaylistService.checkVideoPlaylist({user_id: this.getCurrentUser.id, video_id: video.id})
+      .catch((err) => {
+        console.log(err)
+      })
+      if (!playlists) return
+      this.checkPlaylists = playlists.data.map((playlist) => playlist.id)
+    },
   },
   mounted() {
     if (this.isLoggedIn) {
@@ -276,7 +310,8 @@ export default {
     VideoCard,
     InfiniteLoading,
     NavBar,
-    PlaylistCard
+    PlaylistCard,
+    SavedPlaylistModal
   }
 }
 </script>
