@@ -15,123 +15,149 @@
           class="pt-8 pl-8"
         >
           <h1 class="title font-weight-medium pb-5">Watch later</h1>
-            <template v-if="!watchLaterVideos && !loading">
-              <p class="text-center body-1">No watch history yet.</p>
-            </template>
-            <section>
-              <div
-                v-for="(watchLaterVideo, i) in loading ? 12 : watchLaterVideos"
-                :key="i"
-                class="mb-5"
-              >
-                <v-skeleton-loader
-                  class="mx-auto"
-                  type="list-item-avatar-three-line"
-                  :loading="loading"
+            <template v-if="watchLaterVideos.length <= 0 && !isLoggedIn">
+              <div class="center">
+                <v-icon class="icon">mdi-clock-plus-outline</v-icon>
+                <h2>Keep track of what you watch</h2>
+                <p class="body-1">Watch later video isn't viewable when signed out.</p>
+                <v-btn
+                 id="signInBtn"
                   tile
-                  large
+                  outlined
+                  color="blue"
+                  class="font-weight-bold"
+                  v-if="!isLoggedIn"
+                  router
+                  to="/signin"
                 >
-                  <v-card @click="playVideo(watchLaterVideo.video.id)" class="card card-color" tile flat>
-                    <v-row no-gutters v-if="watchLaterVideo.video">
-                      <v-col class="mx-auto pt-2 pb-2 pl-2 pr-2 " cols="3" sm="3" md="3" lg="3">
-                        <v-img
-                          class="align-center"
-                          :src="
-                            `${getUrl}${watchLaterVideo.video.thumbnails}`
-                          "
-                        >
-                        </v-img>
-                      </v-col>
-                      <v-col>
-                        <div class="ml-2">
-                          <v-card-title
-                            class="pl-2 pt-0 subtitle-1 font-weight-bold d-flex justify-space-between"
-                            style="line-height: 1"
-                          >
-                            {{ watchLaterVideo.video.title }}
-
-                        
-                            <v-menu offset-y left>
-                              <template v-slot:activator="{ on }">
-                                <v-btn text @click="deletewatchLaterVideo(watchLaterVideo.id)" v-on="on">
-                                  <v-icon>mdi-dots-vertical</v-icon>
-                                </v-btn>
-                              </template>
-                            
-                              <v-card>  
-                                <v-list>
-                                  <v-list-item
-                                    @click="deleteWatchLaterVideo(watchLaterVideo.id)"
-                                  >
-                                    <v-list-item-icon>
-                                      <v-icon>mdi-delete</v-icon>
-                                    </v-list-item-icon>
-                                    <v-list-item-title>Remove from watch later</v-list-item-title>
-                                  </v-list-item>
-                                  <v-list-item router to="/studio">
-                                    <v-list-item-icon>
-                                      <v-icon>mdi-format-vertical-align-top</v-icon>
-                                    </v-list-item-icon>
-                                    <v-list-item-title>Move to top</v-list-item-title>
-                                  </v-list-item>
-                                  <v-list-item @click="signOut">
-                                    <v-list-item-icon>
-                                      <v-icon>mdi-format-vertical-align-bottom</v-icon>
-                                    </v-list-item-icon>
-                                    <v-list-item-title>Move to bottom</v-list-item-title>
-                                  </v-list-item>
-                                </v-list>
-                              </v-card>
-                            </v-menu>
-                          </v-card-title>
-
-                          <v-card-subtitle
-                            class="pl-2 pt-2 pb-0"
-                            style="line-height: 1"
-                          >
-                            {{ watchLaterVideo.video.singer.channelName
-                            }}<v-icon>mdi-circle-small</v-icon
-                            >{{ watchLaterVideo.video.views }} views
-                          </v-card-subtitle>
-                          <v-card-subtitle class="pl-2 pt-2 pb-0">
-                            {{ watchLaterVideo.video.description }}
-                          </v-card-subtitle>
-                        </div>
-                      </v-col>
-                    </v-row>
-                  </v-card>
-                </v-skeleton-loader>
+                  <v-icon left size="26">mdi-account-circle</v-icon> Sign in
+                </v-btn>
               </div>
-              <infinite-loading
-                :identifier="infiniteId"
-                @infinite="getWatchLaterVideos"
-              >
-                <div slot="spinner">
-                  <v-progress-circular
-                    indeterminate
-                    color="red"
-                  ></v-progress-circular>
+            </template>
+            <template v-else-if="watchLaterVideos.length <= 0 && isLoggedIn">
+              <div class="center">
+                <v-icon class="icon">mdi-clock-plus-outline</v-icon>
+                <h2>Keep track of what you watch</h2>
+                <p class="body-1">Watch later videos is empty.</p>
+              </div>
+            </template>
+            <template v-else>
+              <section>
+                <div
+                  v-for="(watchLaterVideo, i) in loading ? 12 : watchLaterVideos"
+                  :key="i"
+                  class="mb-5"
+                >
+                  <v-skeleton-loader
+                    class="mx-auto"
+                    type="list-item-avatar-three-line"
+                    :loading="loading"
+                    tile
+                    large
+                  >
+                    <v-card @click="playVideo(watchLaterVideo.video.id)" class="card card-color" tile flat>
+                      <v-row no-gutters v-if="watchLaterVideo">
+                        <v-col class="mx-auto pt-2 pb-2 pl-2 pr-2 " cols="3" sm="3" md="3" lg="3">
+                          <v-img
+                            class="align-center"
+                            :src="
+                              `${getUrl}${watchLaterVideo.video.thumbnails}`
+                            "
+                          >
+                          </v-img>
+                        </v-col>
+                        <v-col>
+                          <div class="ml-2">
+                            <v-card-title
+                              class="pl-2 pt-0 subtitle-1 font-weight-bold d-flex justify-space-between"
+                              style="line-height: 1"
+                            >
+                              {{ watchLaterVideo.video.title }}
+  
+                          
+                              <v-menu offset-y left>
+                                <template v-slot:activator="{ on }">
+                                  <v-btn text @click="deletewatchLaterVideo(watchLaterVideo.id)" v-on="on">
+                                    <v-icon>mdi-dots-vertical</v-icon>
+                                  </v-btn>
+                                </template>
+                              
+                                <v-card>  
+                                  <v-list>
+                                    <v-list-item
+                                      @click="deleteWatchLaterVideo(watchLaterVideo.id)"
+                                    >
+                                      <v-list-item-icon>
+                                        <v-icon>mdi-delete</v-icon>
+                                      </v-list-item-icon>
+                                      <v-list-item-title>Remove from watch later</v-list-item-title>
+                                    </v-list-item>
+                                    <v-list-item router to="/studio">
+                                      <v-list-item-icon>
+                                        <v-icon>mdi-format-vertical-align-top</v-icon>
+                                      </v-list-item-icon>
+                                      <v-list-item-title>Move to top</v-list-item-title>
+                                    </v-list-item>
+                                    <v-list-item @click="signOut">
+                                      <v-list-item-icon>
+                                        <v-icon>mdi-format-vertical-align-bottom</v-icon>
+                                      </v-list-item-icon>
+                                      <v-list-item-title>Move to bottom</v-list-item-title>
+                                    </v-list-item>
+                                  </v-list>
+                                </v-card>
+                              </v-menu>
+                            </v-card-title>
+  
+                            <v-card-subtitle
+                              class="pl-2 pt-2 pb-0"
+                              style="line-height: 1"
+                            >
+                              {{ watchLaterVideo.video.singer.channelName
+                              }}<v-icon>mdi-circle-small</v-icon
+                              >{{ watchLaterVideo.video.views }} views
+                            </v-card-subtitle>
+                            <v-card-subtitle class="pl-2 pt-2 pb-0">
+                              {{ watchLaterVideo.video.description }}
+                            </v-card-subtitle>
+                          </div>
+                        </v-col>
+                      </v-row>
+                    </v-card>
+                  </v-skeleton-loader>
                 </div>
-                <div slot="no-results"></div>
-                <span slot="no-more"></span>
-                <div slot="error" slot-scope="{ trigger }">
-                  <v-alert prominent type="error">
-                    <v-row align="center">
-                      <v-col class="grow">
-                        <div class="title">Error!</div>
-                        <div>
-                          Something went wrong, but don’t fret — let’s give it
-                          another shot.
-                        </div>
-                      </v-col>
-                      <v-col class="shrink">
-                        <v-btn @click="trigger">Take action</v-btn>
-                      </v-col>
-                    </v-row>
-                  </v-alert>
-                </div>
-              </infinite-loading>
-            </section>
+                <infinite-loading
+                  :identifier="infiniteId"
+                  @infinite="getWatchLaterVideos"
+                >
+                  <div slot="spinner">
+                    <v-progress-circular
+                      indeterminate
+                      color="red"
+                    ></v-progress-circular>
+                  </div>
+                  <div slot="no-results"></div>
+                  <span slot="no-more"></span>
+                  <div slot="error" slot-scope="{ trigger }">
+                    <v-alert prominent type="error">
+                      <v-row align="center">
+                        <v-col class="grow">
+                          <div class="title">Error!</div>
+                          <div>
+                            Something went wrong, but don’t fret — let’s give it
+                            another shot.
+                          </div>
+                        </v-col>
+                        <v-col class="shrink">
+                          <v-btn @click="trigger">Take action</v-btn>
+                        </v-col>
+                      </v-row>
+                    </v-alert>
+                  </div>
+                </infinite-loading>
+              </section>
+            </template>
+
         </v-col>
         <v-col
           cols="12"
@@ -149,6 +175,7 @@
         >
           <v-card
             flat
+            v-if="watchLaterVideos.length > 0 && watchLaterVideos[0].video"
             id="card-radiobox"
             class="fill-height fix_height lighten-4 pa-10"
           >
@@ -208,7 +235,7 @@ export default {
     clearLoading: false
   }),
   computed: {
-    ...mapGetters(['getCurrentUser', 'getUrl'])
+    ...mapGetters(['getCurrentUser', 'getUrl', 'isLoggedIn'])
   },
   methods: {
     async getWatchLaterVideos($state) {
@@ -318,5 +345,15 @@ export default {
 }
 .card-color div:hover {
   background-color: #f5f5f5 !important;
+}
+.center {
+  margin: auto;
+  width: 50%;
+  padding: 10px;
+  text-align: center;
+  .icon {
+    font-size: 100px;
+    color: black;
+  }
 }
 </style>

@@ -133,6 +133,8 @@
                 :video="video"
                 :channel="video.singer"
                 v-on:openPlaylistDialog="handleShowSavedPlaylistDialog(video)"
+                v-on:addWatchLater="handleAddWatchLater(video)"
+                v-on:removeWatchLater="handleRemoveWatchLater"
               ></video-card>
             </v-skeleton-loader>
           </v-col>
@@ -179,7 +181,7 @@
     >
     </saved-playlist-modal>
     <v-snackbar  :timeout="timeout" v-model="snackbar">
-        {{ createPlaylistMessage }}
+        {{ message }}
       </v-snackbar>
   </div>
 
@@ -196,6 +198,7 @@ import NavBar from '@/components/NavBar'
 import PlaylistCard from '@/components/PlaylistCard.vue'
 import SavedPlaylistModal from '@/components/SavedPlaylistModal.vue'
 import OwnPlaylistService from '@/services/OwnPlaylistService'
+import WatchLaterService from '@/services/WatchLaterService'
 export default {
   name: 'HomeView',
   data: () => ({
@@ -206,7 +209,7 @@ export default {
     show: false,
     snackbar: false,
     showSavedPlaylistDialog: false,
-    createPlaylistMessage: 'Create playlist successfully!',
+    message: 'Create playlist successfully!',
     videos: [],
     currentVideo: {},
     playlists: [],
@@ -222,9 +225,9 @@ export default {
       if (!this.loaded) {
         this.loading = true
       }
-      console.log("hehe")
       var videos = []
       if (this.musicType === '') {
+        console.log("hehe")
         videos = await VideoService.getAll('public', { page: this.page })
           .catch((err) => {
             console.log(err)
@@ -252,9 +255,12 @@ export default {
       // $state.complete()
       if (videos.data.length) {
         this.page += 1
+        console.log(`page: ${this.page}`)
         this.videos.push(...videos.data)
-        $state.loaded()
-        this.loaded = true
+        if ($state) {
+          $state.loaded()
+          this.loaded = true
+        }
       } else {
         $state.complete()
       }
@@ -299,6 +305,26 @@ export default {
       if (!playlists) return
       this.checkPlaylists = playlists.data.map((playlist) => playlist.id)
     },
+    async handleAddWatchLater(video) {
+      await WatchLaterService.createWatchLater({
+        video_id: video.id,
+        user_id: this.getCurrentUser.id
+      }).catch((err) => {
+        console.log(err)
+      }).finally(() => {
+        this.snackbar = true
+        this.message = 'Added to watch later!'
+      })
+    },
+    async handleRemoveWatchLater(id) {
+      await WatchLaterService.removeWatchLater(id)
+      .catch((err) => {
+        console.log(err)
+      }).finally(() => {
+        this.snackbar = true
+        this.message = 'Removed from watch later!'
+      })
+    }
   },
   mounted() {
     if (this.isLoggedIn) {
