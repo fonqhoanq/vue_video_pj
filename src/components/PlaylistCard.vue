@@ -8,6 +8,7 @@
     >
     <figure>
       <v-img
+        v-if="playlist.playlist_videos[0]"
         class="img-video"
         :src="`${url}${playlist.playlist_videos[0].video.thumbnails}`"
   

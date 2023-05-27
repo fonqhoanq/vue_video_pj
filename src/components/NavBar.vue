@@ -259,7 +259,7 @@
             <v-divider class="hidden-lg-and-up"></v-divider>
             <div v-for="parentItem in items" :key="parentItem.header">
               <v-subheader
-                v-if="parentItem.header"
+                v-if="parentItem.header && isLoggedIn"
                 class="pl-3 py-4 subtitle-1 font-weight-bold text-uppercase"
                 >{{ parentItem.header }}</v-subheader
               >

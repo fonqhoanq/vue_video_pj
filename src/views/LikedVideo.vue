@@ -36,8 +36,31 @@
                 ></video-card>
               </v-skeleton-loader>
             </v-col>
-            <v-col class="text-center" v-if="videos.length === 0 && !loading">
-              <p>No liked videos yet</p>
+            <v-col class="text-center" v-if="videos.length === 0 && !loading && !isLoggedIn">
+              <div class="center">
+                <v-icon class="icon">mdi-cards-playing-heart-multiple</v-icon>
+                <h2>Enjoy your favorite videos</h2>
+                <p class="body-1">Sign in to access videos that you’ve liked</p>
+                <v-btn
+                 id="signInBtn"
+                  tile
+                  outlined
+                  color="blue"
+                  class="font-weight-bold"
+                  v-if="!isLoggedIn"
+                  router
+                  to="/signin"
+                >
+                  <v-icon left size="26">mdi-account-circle</v-icon> Sign in
+                </v-btn>
+              </div>
+            </v-col>
+            <v-col class="text-center" v-if="videos.length === 0 && !loading && isLoggedIn">
+              <div class="center">
+                <v-icon class="icon">mdi-cards-playing-heart-multiple</v-icon>
+                <h2>Enjoy your favorite videos</h2>
+                <p class="body-1">You haven’t liked any videos yet</p>
+              </div>
             </v-col>
             <v-col cols="12" sm="12" md="12" lg="12">
               <infinite-loading @infinite="getVideos">
@@ -140,6 +163,16 @@
   <style lang="scss">
   .card {
     background: #f9f9f9 !important;
+  }
+  .center {
+    margin: auto;
+    width: 50%;
+    padding: 10px;
+    text-align: center;
+    .icon {
+      font-size: 100px;
+      color: black;
+    }
   }
   </style>
   

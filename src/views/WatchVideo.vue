@@ -29,8 +29,11 @@
                   <div ref="hello">
                     <v-responsive max-height="650">
                       <video
+                        id="videoPlayer"
                         ref="videoPlayer"
                         controls
+                        @ended="onVideoEnded"
+                        autoplay
                         style="height: 100%; width: 100%"
                         :src="`${url}${video.url}`"
                         type="video/mp4"
@@ -246,7 +249,7 @@
               </v-col>
   
               <v-col cols="12" sm="12" md="3" lg="3">
-                <template v-if="ownPlaylist.own_playlist_videos.length > 0">
+                <template v-if="ownPlaylist.own_playlist_videos">
                   <v-card>
                     <v-list-item>
                       <v-list-item-title
@@ -343,7 +346,7 @@
                     </v-list>
                   </v-card>
                 </template>
-                <template v-if="playlist">
+                <template v-if="playlist.playlist_videos">
                   <v-card>
                     <v-list-item>
                       <v-list-item-title
@@ -497,49 +500,72 @@
                     </infinite-loading>
                   </v-tab-item>
                   <v-tab-item>
-                    <v-slide-item
-                      v-for="(video, i) in loading ? 12 : watchedVideos"
-                      :key="i"
-                      class="mb-5"
+                    <template
+                      v-if="isLoggedIn"
                     >
-                      <v-skeleton-loader
-                        class="mx-auto"
-                        type="list-item-avatar-three-line"
-                        :loading="loading"
-                        tile
-                        large
+                      <v-slide-item
+                        v-for="(video, i) in loading ? 12 : watchedVideos"
+                        :key="i"
+                        class="mb-5"
                       >
-                        <recommend-video-card
-                          :video="video"
-                        ></recommend-video-card>
-                      </v-skeleton-loader>
-                    </v-slide-item>
-                    <infinite-loading :identifier="infiniteId" @infinite="getWatchedVideos">
-                      <div slot="spinner">
-                        <v-progress-circular
-                          indeterminate
-                          color="red"
-                        ></v-progress-circular>
-                      </div>
-                      <div slot="no-results"></div>
-                      <span slot="no-more"></span>
-                      <div slot="error" slot-scope="{ trigger }">
-                        <v-alert prominent type="error">
-                          <v-row align="center">
-                            <v-col class="grow">
-                              <div class="title">Error!</div>
-                              <div>
-                                Something went wrong, but don’t fret — let’s give it
-                                another shot.
-                              </div>
-                            </v-col>
-                            <v-col class="shrink">
-                              <v-btn @click="trigger">Take action</v-btn>
-                            </v-col>
-                          </v-row>
-                        </v-alert>
-                      </div>
-                    </infinite-loading>
+                        <v-skeleton-loader
+                          class="mx-auto"
+                          type="list-item-avatar-three-line"
+                          :loading="loading"
+                          tile
+                          large
+                        >
+                          <recommend-video-card
+                            :video="video"
+                          ></recommend-video-card>
+                        </v-skeleton-loader>
+                      </v-slide-item>
+                      <infinite-loading :identifier="infiniteId" @infinite="getWatchedVideos">
+                        <div slot="spinner">
+                          <v-progress-circular
+                            indeterminate
+                            color="red"
+                          ></v-progress-circular>
+                        </div>
+                        <div slot="no-results"></div>
+                        <span slot="no-more"></span>
+                        <div slot="error" slot-scope="{ trigger }">
+                          <v-alert prominent type="error">
+                            <v-row align="center">
+                              <v-col class="grow">
+                                <div class="title">Error!</div>
+                                <div>
+                                  Something went wrong, but don’t fret — let’s give it
+                                  another shot.
+                                </div>
+                              </v-col>
+                              <v-col class="shrink">
+                                <v-btn @click="trigger">Take action</v-btn>
+                              </v-col>
+                            </v-row>
+                          </v-alert>
+                        </div>
+                      </infinite-loading>
+                    </template>
+                    <template
+                      v-else
+                    >
+                      <v-card class="pt-8">
+                        <v-card-text>
+                          <h2 class="mb-3">Want to watch watched video?</h2>
+                          <p>Sign in to watch these videos.</p>
+                        </v-card-text>
+                  
+                        <v-divider></v-divider>
+                  
+                        <v-card-actions>
+                          <v-spacer></v-spacer>
+                          <v-btn color="primary" to="/signin">
+                            Sign in
+                          </v-btn>
+                        </v-card-actions>
+                      </v-card>
+                    </template>
                   </v-tab-item>
                 </v-tabs-items>
                 
@@ -611,7 +637,7 @@
       details: {},
       url: process.env.VUE_APP_URL,
       avatarURL: "https://www.hollywoodreporter.com/wp-content/uploads/2022/12/GettyImages-1448719385.jpg?w=1296",
-      items: ['All', 'Related Videos', 'Video of singer', 'Recently Uploaded Videos', 'Watched Videos'],
+      items: ['All', 'Video of singer','Watched Videos', 'Related Videos',  'Recently Uploaded Videos'],
       tab: null
     }),
     computed: {
@@ -665,12 +691,29 @@
         if (!this.loaded) {
           this.loading = true
         }
-        const videos = await VideoService.getAll('public', { page: this.page })
+        var videos = []
+        if (this.isLoggedIn) {
+          videos = await VideoService.getVideosAfterWatchingCurrentVideo({
+          page: this.page,
+          id: this.video.id,
+          user_id: this.getCurrentUser.id,
+          singer_id: this.video.singer.id
+         })
           .catch((err) => {
             console.log(err)
             this.errored = true
           })
           .finally(() => (this.loading = false))
+        } else {
+          videos = await VideoService.getAll('public', {
+            page: this.page
+          })
+            .catch((err) => {
+              console.log(err)
+              this.errored = true
+            })
+            .finally(() => (this.loading = false))
+        }
         if (typeof videos === 'undefined') return
         if (videos.data.length) {
           this.page += 1
@@ -881,14 +924,10 @@
           .finally(() => {
             this.loading = false
           })
-        console.log('watch later')
-        console.log(watchLater)
         watchLater.data.length == 0 ? this.isWatchLater = false : this.isWatchLater = true
         if (this.isWatchLater) {
           this.watchLaterId = watchLater.data[0].id
         }
-        console.log('watch later id')
-        console.log(this.watchLaterId)
       },
       async switchToWatchLater() {
         if (!this.isLoggedIn) {
@@ -937,8 +976,6 @@
             this.loading = false
           })
         if (!videos) return
-        console.log("watched videos")
-        console.log(videos)
         this.watchLaterVideos = videos.data
         // this.singerVideos = videos.data
       },
@@ -953,8 +990,6 @@
             this.loading = false
           })
         if (!ownPlaylist) return
-        console.log('own playlist')
-        console.log(ownPlaylist)
         this.ownPlaylist = ownPlaylist.data
       },
       async subscribe() {
@@ -990,8 +1025,11 @@
           this.video.singer.subscribers++
         }
       },
-      async updateViews(id) {
-        const views = await VideoService.updateViews(id).catch((err) => {
+      async updateViews(id, duration, currentTime) {
+        const views = await VideoService.updateViews(id, {
+          duration: duration,
+          current_time: currentTime
+        }).catch((err) => {
           console.log(err)
         })
         if (!views) return
@@ -1003,6 +1041,14 @@
       },
       actions() {
         this.getVideo()
+      },
+      onVideoEnded() {
+        this.$router.push({
+          name: 'WatchVideo',
+          params: {
+            id: this.videos[0].id
+          }
+        })
       },
       show(event) {
         if (event.target.innerText === 'SHOW MORE') {
@@ -1052,8 +1098,6 @@
     mounted() {
       console.log(this.$route.params + 'mounted')
       this.getVideo(this.$route.params.id)
-      console.log('video: ' + this.$route.params.id)
-      console.log('is login ?' + this.isLoggedIn)
       if (this.isLoggedIn) {
         if (this.$route.params.playlist_id) {
           this.getPlaylistVideos(this.$route.params.playlist_id)
@@ -1064,7 +1108,6 @@
         if (this.$route.params.isWatchOwnPlayList) {
           this.getOwnPlaylist(this.$route.params.own_playlist_id)
         }
-        this.updateViews(this.$route.params.id)
       }
     },
     beforeRouteUpdate(to, from, next) {
@@ -1073,8 +1116,9 @@
       this.infiniteId += 1
       console.log('to params' + to.params.id)
       this.getVideo(to.params.id)
+      let video = document.getElementById('videoPlayer')
       if (this.isLoggedIn) {
-        this.updateViews(to.params.id)
+        this.updateViews(this.$route.params.id, video.duration, video.currentTime)
       }
       if (to.params.playlist_id) {
         this.getPlaylistVideos(to.params.playlist_id)

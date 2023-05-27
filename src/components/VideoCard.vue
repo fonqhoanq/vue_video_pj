@@ -36,7 +36,7 @@
             >
               {{ video.title }}
             </v-card-title>
-            <v-menu offset-y left>
+            <v-menu v-if="isLoggedIn" offset-y left>
               <template v-slot:activator="{ on }">
                 <v-btn class="btnDot" text v-on="on">
                   <v-icon>mdi-dots-vertical</v-icon>
@@ -59,11 +59,11 @@
                     </v-list-item-icon>
                     <v-list-item-title>Report this video</v-list-item-title>
                   </v-list-item>
-                  <v-list-item>
+                  <v-list-item @click="handleAddWatchLater">
                     <v-list-item-icon>
                       <v-icon>mdi-clock</v-icon>
                     </v-list-item-icon>
-                    <v-list-item-title>Add to watch later</v-list-item-title>
+                    <v-list-item-title>{{ watchLaterTitle }}</v-list-item-title>
                   </v-list-item>
                 </v-list>
               </v-card>
@@ -86,6 +86,7 @@
   <script>
   import moment from "moment";
   import { mapGetters } from 'vuex'
+  import WatchLaterService from '@/services/WatchLaterService'
   export default {
     name: "VideoCard",
     props: {
@@ -102,11 +103,16 @@
     data() {
       return {
         url: process.env.VUE_APP_URL,
-        avatarURL: "https://www.hollywoodreporter.com/wp-content/uploads/2022/12/GettyImages-1448719385.jpg?w=1296"
+        avatarURL: "https://www.hollywoodreporter.com/wp-content/uploads/2022/12/GettyImages-1448719385.jpg?w=1296",
+        isWatchLater: false,
+        watchLaterId: ''
       };
     },
     computed: {
-      ...mapGetters(['getCurrentUser', 'getUrl'])
+      ...mapGetters(['getCurrentUser', 'getUrl', 'isLoggedIn']),
+      watchLaterTitle() {
+        return this.isWatchLater ? 'Remove from watch later' : 'Add to watch later'
+      }
     },
     methods: {
       dateFormatter(date) {
@@ -118,7 +124,49 @@
       showSavedPlaylistDialog() {
         this.$emit('openPlaylistDialog')
       },
+      handleAddWatchLater() {
+        this.newWatchLaterId(this.video.id)
+        console.log( 'watchLaterID',this.watchLaterId)
+        this.isWatchLater = !this.isWatchLater
+        this.isWatchLater ? this.$emit('addWatchLater') : this.$emit('removeWatchLater', this.watchLaterId)
+      },
+      async checkWatchLater(id) {
+        if (!this.isLoggedIn) return
+  
+        this.loading = true
+        const watchLater = await WatchLaterService.checkWatchLater({ 
+          video_id: id,
+          user_id: this.getCurrentUser.id 
+         })
+          .catch((err) => {
+            console.log(err)
+          })
+          .finally(() => {
+            this.loading = false
+          })
+        watchLater.data.length == 0 ? this.isWatchLater = false : this.isWatchLater = true
+        if (this.isWatchLater) {
+          this.watchLaterId = watchLater.data[0].id
+        }
+      },
+      async newWatchLaterId(id) {
+        const watchLater = await WatchLaterService.checkWatchLater({ 
+          video_id: id,
+          user_id: this.getCurrentUser.id 
+         })
+          .catch((err) => {
+            console.log(err)
+          })
+          .finally(() => {
+            this.loading = false
+          })
+        if (watchLater.data.length == 0) return
+        this.watchLaterId = watchLater.data[0].id
+      }
     },
+    mounted() {
+      this.checkWatchLater(this.video.id)
+    }
   };
 </script>
   

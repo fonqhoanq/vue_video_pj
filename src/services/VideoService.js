@@ -6,6 +6,11 @@ export default {
       params
     })
   },
+  getVideosAfterWatchingCurrentVideo(params) {
+    return Api().get(`videos/recommend_after_watching`, {
+      params
+    })
+  },
   getBySingerId(data, params) {
     return Api().get(`videos/singer/${data}`, {
       params
@@ -40,8 +45,8 @@ export default {
   updateVideo(id, data) {
     return Api().put(`videos/${id}`, data)
   },
-  updateViews(id) {
-    return Api().put(`videos/${id}/views`)
+  updateViews(id, data) {
+    return Api().put(`videos/${id}/views`, data)
   },
   uploadThumbnail(id, data) {
     return Api().put(`videos/${id}/thumbnails`, data)
