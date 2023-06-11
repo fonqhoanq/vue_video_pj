@@ -413,7 +413,7 @@
 				console.log('field: ' + field);
 			},
       categoryId() {
-        return this.categories.indexOf(this.formData.category)
+        return this.categories.indexOf(this.formData.category) + 1
       },
       convertStatus() {
        if (this.formData.visibility === 'Public') {

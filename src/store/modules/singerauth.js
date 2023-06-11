@@ -3,19 +3,19 @@ import axios from "axios";
 const BASE_URL = "http://localhost:3000/";
 
 const state = {
-  auth_token: null,
+  singer_auth_token: localStorage.getItem("singer_auth_token"),
   singer: {
-    id: null,
-    channelName: null,
-    email: null,
-    age: null,
-    avatarUrl: null
+    id: localStorage.getItem("id"),
+    channelName: localStorage.getItem("channelName"),
+    email: localStorage.getItem("email"),
+    age: localStorage.getItem("age"),
+    avatarUrl: localStorage.getItem("avatarUrl")
   },
   base_url: "http://localhost:3000/"
 };
 const getters = {
-  getAuthToken(state) {
-    return state.auth_token;
+  getSingerAuthToken(state) {
+    return state.singer_auth_token;
   },
   getSingerEmail(state) {
     return state.singer?.email;
@@ -23,9 +23,9 @@ const getters = {
   getSingerID(state) {
     return state.singer?.id;
   },
-  isLoggedIn(state) {
+  isSingerLoggedIn(state) {
     const loggedOut =
-      state.auth_token == null || state.auth_token == JSON.stringify(null);
+      state.singer_auth_token == null || state.singer_auth_token == JSON.stringify(null);
     return !loggedOut;
   },
   getCurrentSinger(state) {
@@ -67,7 +67,7 @@ const actions = {
   logoutSinger({ commit }) {
     const config = {
       headers: {
-        authorization: state.auth_token,
+        authorization: state.singer_auth_token,
       },
     };
     new Promise((resolve, reject) => {
@@ -85,7 +85,7 @@ const actions = {
   loginSingerWithToken({ commit }, payload) {
     const config = {
       headers: {
-        Authorization: payload.auth_token,
+        Authorization: payload.singer_auth_token,
       },
     };
     new Promise((resolve, reject) => {
@@ -116,15 +116,21 @@ const mutations = {
       age: data.data.age,
       avatarUrl: data.data.avatarUrl
     }
+    localStorage.setItem("id", data.data.id);
+    localStorage.setItem("channelName", data.data.channelName);
+    localStorage.setItem("email", data.data.email);
+    localStorage.setItem("age", data.data.age);
+    localStorage.setItem("avatarUrl", data.data.avatarUrl);
+
     console.log("state singer")
     console.log(state.singer)
-    state.auth_token = data.headers.authorization;
+    state.singer_auth_token = data.headers.authorization;
     axios.defaults.headers.common["Authorization"] = data.headers.authorization;
-    localStorage.setItem("auth_token", data.headers.authorization);
+    localStorage.setItem("singer_auth_token", data.headers.authorization);
   },
   setSingerInfoFromToken(state, data) {
     state.singer = data.data.singer;
-    state.auth_token = localStorage.getItem("auth_token");
+    state.singer_auth_token = localStorage.getItem("singer_auth_token");
   },
   resetSingerInfo(state) {
     state.singer = {
@@ -134,8 +140,13 @@ const mutations = {
       avatarUrl: null,
       age: null
     };
-    state.auth_token = null;
-    localStorage.removeItem("auth_token");
+    state.singer_auth_token = null;
+    localStorage.removeItem("singer_auth_token");
+    localStorage.removeItem("id");
+    localStorage.removeItem("channelName");
+    localStorage.removeItem("email");
+    localStorage.removeItem("age");
+    localStorage.removeItem("avatarUrl");
     axios.defaults.headers.common["Authorization"] = null;
   },
 };

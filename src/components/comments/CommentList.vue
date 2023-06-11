@@ -78,7 +78,7 @@
                         <v-img
                           v-if="getCurrentUser.avatarUrl !== 'no-photo.jpg'"
                           class="elevation-6"
-                          :src="`${url}${getCurrentUser.avatarUrl}`"
+                          :src="`${url}${avatar}`"
                         ></v-img>
                         <v-avatar v-else color="red">
                           <span class="white--text headline ">
@@ -230,6 +230,7 @@
     },
     data: function() {
       return {
+        avatar: localStorage.getItem('avatarUrl'),
         repliesInput: {},
         comments: this.$store.getters.getComments.data,
         commentsLength: false,
@@ -302,6 +303,7 @@
             // this.$store.dispatch('setComments', this.videoId)
           })
         reply.data.user = this.$store.getters.getCurrentUser
+        reply.data.user.avatarUrl = this.avatar
         // this.$store.dispatch('addComment', reply.data.data)
         // console.log(this.$store.getters.getComments.data)
         let comment = this.comments.find(

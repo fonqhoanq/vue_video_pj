@@ -59,7 +59,7 @@
                   <ValidationProvider
                     v-slot="{ errors }"
                     name="Playlist Title"
-                    rules="required|min:3"
+                    rules="required|min:3|max:50"
                   >
                     <v-text-field
                       v-model="formData.title"
@@ -72,7 +72,7 @@
                   <ValidationProvider
                     v-slot="{ errors }"
                     name="Playlist Description"
-                    rules="required|min:3"
+                    rules="required|min:3|max:255"
                   >
                     <v-text-field
                       v-model="formData.description"

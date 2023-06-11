@@ -85,7 +85,7 @@
       loading: false
     }),
     computed: {
-      ...mapGetters(["getAuthToken", "getUserEmail", "getUserID", "isLoggedIn", "getCurrentUser"]),
+      ...mapGetters(["getUserEmail", "getUserID", "isLoggedIn", "getCurrentUser"]),
     },
     methods: {
       async signin() {

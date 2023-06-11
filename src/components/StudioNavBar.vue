@@ -62,7 +62,7 @@
             <v-btn small color="red" depressed fab v-on="on" class="white--text">
               <v-avatar v-if="getCurrentUser.avatarUrl !== 'no-photo.jpg'">
                 <img
-                  :src="`${getUrl}${getCurrentUser.avatarUrl}`"
+                  :src="`${getUrl}${avatar}`"
                   :alt="`${getCurrentUser.username} avatar`"
                 />
               </v-avatar>
@@ -80,7 +80,7 @@
                 <v-list-item-avatar>
                   <v-avatar v-if="getCurrentUser.avatarUrl !== 'no-photo.jpg'">
                     <img
-                      :src="`${getUrl}${getCurrentUser.avatarUrl}`"
+                      :src="`${getUrl}${avatar}`"
                     />
                   </v-avatar>
                   <template v-else>
@@ -207,7 +207,7 @@
                     v-if="getCurrentUser.avatarUrl !== 'no-photo.jpg'"
                   >
                     <img
-                      :src="`${getUrl}${getCurrentUser.avatarUrl}`"
+                      :src="`${getUrl}${avatar}`"
                       :alt="`${getCurrentUser.username} avatar`"
                     />
                   </v-avatar>
@@ -255,6 +255,7 @@
   export default {
     name: 'StudioNavBar',
     data: () => ({
+      avatar: localStorage.getItem('avatarUrl'),
       drawer: false,
       items: [
         {
