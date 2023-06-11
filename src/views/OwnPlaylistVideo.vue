@@ -192,7 +192,7 @@
             </v-img>
             <p class="title font-weight-regular mt-2 mb-2">{{ ownPlaylist.title }}</p>
             <div>
-              <p>{{ getCurrentUser.username }}</p>
+              <p>{{ userName }}</p>
               <div class="content">
                 <p class="">{{ `${ownPlaylist.videos.length} videos` }}</p>
                 <p class="">No views</p>
@@ -232,6 +232,7 @@ import VideoService from '@/services/VideoService'
 export default {
   data: function() {
     return {
+      userName: localStorage.getItem('username'),
       loading: false,
       loaded: false,
       errored: false,

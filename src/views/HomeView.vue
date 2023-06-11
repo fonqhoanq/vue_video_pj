@@ -18,7 +18,7 @@
 
       <main v-else>
         <div v-if="isLoggedIn && musicType === ''">
-          <h3 class="headline font-weight-medium">Playlists</h3>
+          <h3 class="headline font-weight-medium" @click="showInfor">Playlists</h3>
           <v-slide-group class="pa-4" multiple show-arrows>
             <v-slide-item
               v-for="(playlist, i) in loading ? 12 : playlists"
@@ -324,6 +324,15 @@ export default {
         this.snackbar = true
         this.message = 'Removed from watch later!'
       })
+    },
+    showInfor() {
+      console.log(this.isLoggedIn)
+      console.log(localStorage.getItem('username'))
+      console.log(localStorage.getItem('id'))
+      console.log(this.getCurrentUser.id)
+      console.log(this.getCurrentUser.username)
+      console.log(this.getCurrentUser.avatarUrl)
+      console.log(this.getCurrentUser.email)      
     }
   },
   mounted() {

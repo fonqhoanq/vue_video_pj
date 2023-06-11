@@ -206,7 +206,7 @@
         categories: ['People', 'Technology', 'Fashion'],
         visibilty: ['Public', 'Private'],
         formData: {
-          channelName: this.$store.getters.getCurrentSinger.channelName,
+          channelName: localStorage.getItem('channelName'),
           email: this.$store.getters.getCurrentSinger.email,
           currentPassword: '',
           newPassword: ''

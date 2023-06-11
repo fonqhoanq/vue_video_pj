@@ -18,7 +18,7 @@
                       <ValidationProvider
                         v-slot="{ errors }"
                         name="Name"
-                        rules="required|min:3"
+                        rules="required|min:3|max:40"
                       >
                         <v-text-field
                           v-model="name"
@@ -48,7 +48,7 @@
                       <ValidationProvider
                         v-slot="{ errors }"
                         name="Age"
-                        rules="required"
+                        rules="min:2|max:2"
                       >
                         <v-text-field
                           v-model="age"
@@ -58,6 +58,19 @@
                           outlined
                           dense
                         ></v-text-field>
+                      </ValidationProvider>
+                      <ValidationProvider
+                        v-slot="{ errors }"
+                        name="Gender"
+                        rules="required"
+                      >
+                        <v-select
+                          :items="genders"
+                          :error-messages="errors"
+                          filled
+                          label="Gender"
+                          v-model="gender"
+                        ></v-select>
                       </ValidationProvider>
                       <v-row>
                         <v-col cols="6">
@@ -249,7 +262,10 @@
   export default {
     name: 'SignUp',
     computed: {
-      ...mapGetters(["getAuthToken", "getUserEmail", "getUserID", "isLoggedIn"]),
+      ...mapGetters(["getUserEmail", "getUserID", "isLoggedIn"]),
+      convertGender() {
+        return this.gender === 'Male' ? 'male' : 'famale' 
+      }
     },
     data: () => ({
       name: '',
@@ -257,7 +273,9 @@
       age: null,
       password: '',
       confirmPassword: '',
-      loading: false
+      gender: '',
+      loading: false,
+      genders: ['Male', 'Famale']
     }),
     methods: {
       async signUp() {
@@ -269,6 +287,7 @@
               name: this.name,
               email: this.email,
               age: this.age,
+              gender: this.convertGender,
               password: this.password,
               password_confirmation: this.confirmPassword
             }
@@ -287,7 +306,7 @@
         if (!data) return
   
         this.loading = false
-        this.$router.push({ name: 'Home' })
+        this.$router.push({ name: 'Signin' })
       }
     }
   }

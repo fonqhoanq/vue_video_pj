@@ -24,6 +24,77 @@
         <!-- <v-toolbar-title>Page title</v-toolbar-title> -->
   
         <v-spacer></v-spacer>
+        <v-menu 
+          offset-y left 
+          v-if="isSingerLoggedIn"
+          >
+          <template v-slot:activator="{ on: menu }">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on: tooltip }">
+                <div class="notiWrap">
+                  <v-btn icon class="mr-7" v-on="{ ...tooltip, ...menu }"
+                  ><v-icon size="25">mdi-bell-outline</v-icon>
+                  </v-btn>
+                  <span v-if="notiCount !== 0" class="notiCount">{{ notiCount }}</span>
+                </div>
+              </template>
+              <span>Notifications</span>
+            </v-tooltip>
+          </template>
+
+          <v-card>
+            <v-list-item>
+              <v-list-item-title
+              class="mt-2 ml-2"
+            >
+              Notifications
+            </v-list-item-title>
+            </v-list-item>
+            <v-list
+              style="max-height: 500px"
+              class="notification overflow-y-auto"
+            >
+            <div
+            v-for="(notification, i) in notifications"
+            :key="i"
+            >
+              <v-list-item
+                :class="[
+                {'unreadNoti': !notification.readAt}]"
+                @click="updateNotification(notification)"
+              >
+                <v-list-item-avatar class="ml-2">
+                  <v-avatar>
+                    <img
+                    :src="`${getUrl}${notification.avatarUrl}`"
+                    />
+                  </v-avatar>
+                </v-list-item-avatar>
+                <v-list-item-content class="mr-2">
+                  <div class="d-flex">
+                    <div class="content">
+                      <v-list-item-title class="title">{{
+                        notification.content
+                      }}</v-list-item-title>
+                      <v-list-item-subtitle>
+                        {{ dateFormatter(notification.createdAt) }}
+                      </v-list-item-subtitle>
+                    </div>
+                    <v-img
+                      height="60"
+                      width="100"
+                      class="img_url"
+                      :src="`${getUrl}${notification.thumbnails}`"
+                    >
+                    </v-img>
+                  </div>
+                </v-list-item-content>
+              </v-list-item>
+            </div>
+
+            </v-list>
+          </v-card>
+        </v-menu>
         <v-menu offsetY>
           <template v-slot:activator="{ on: menu }">
             <v-tooltip bottom>
@@ -62,7 +133,7 @@
             <v-btn small color="red" depressed fab v-on="on" class="white--text">
               <v-avatar v-if="getCurrentSinger.avatarUrl !== 'no-photo.jpg'">
                 <img
-                  :src="`${getUrl}${getCurrentSinger.avatarUrl}`"
+                  :src="`${getUrl}${avatar}`"
                   :alt="`${getCurrentSinger.channelName} avatar`"
                 />
               </v-avatar>
@@ -80,7 +151,7 @@
                 <v-list-item-avatar>
                   <v-avatar v-if="getCurrentSinger.avatarUrl !== 'no-photo.jpg'">
                     <img
-                      :src="`${getUrl}${getCurrentSinger.avatarUrl}`"
+                      :src="`${getUrl}${avatar}`"
                     />
                   </v-avatar>
                   <template v-else>
@@ -96,7 +167,7 @@
   
                 <v-list-item-content>
                   <v-list-item-title class="text-capitalize">{{
-                    getCurrentSinger.channelName
+                    channelName
                   }}</v-list-item-title>
                   <v-list-item-subtitle>{{
                     getCurrentSinger.email
@@ -207,7 +278,7 @@
                     v-if="getCurrentSinger.avatarUrl !== 'no-photo.jpg'"
                   >
                     <img
-                      :src="`${getUrl}${getCurrentSinger.avatarUrl}`"
+                      :src="`${getUrl}${avatar}`"
                       :alt="`${getCurrentSinger.channelName} avatar`"
                     />
                   </v-avatar>
@@ -225,7 +296,7 @@
               <v-list-item link :to="`/channels/${getCurrentSinger.id}`">
                 <v-list-item-content>
                   <v-list-item-title class="title">{{
-                    getCurrentSinger.channelName
+                    channelName
                   }}</v-list-item-title>
                   <v-list-item-subtitle>{{
                     getCurrentSinger.email
@@ -249,13 +320,18 @@
   
   <script>
   import { mapGetters } from 'vuex'
-  
+  import NotificationService from '@/services/NotificationService'
   import UploadVideoModal from '@/components/UploadVideoModal'
   import SingerSettingsModal from '@/components/Singers/SingerSettingsModal'
+
   export default {
     name: 'StudioNavBar',
     data: () => ({
       drawer: false,
+      channelName: localStorage.getItem('channelName'),
+      notiCount: 0,
+      notifications: [],
+      avatar: localStorage.getItem('avatarUrl'),
       items: [
         {
           header: 'scroll',
@@ -324,7 +400,7 @@
       settingsDialog: false
     }),
     computed: {
-      ...mapGetters(['getCurrentSinger', 'getUrl'])
+      ...mapGetters(['getCurrentSinger', 'getUrl', 'isSingerLoggedIn'])
     },
     methods: {
       search() {
@@ -340,6 +416,19 @@
       signOut() {
         this.$store.dispatch('logoutSinger')
         this.$router.push({ name: 'SingerSignIn'})
+      },
+      async getNotifications() {
+        const params = {
+          singer_id: this.getCurrentUser.id,
+          noti_type: 'recent_upload_video_notification'
+        }
+        const notifications = await NotificationService.getSingerNotifications(
+          params
+        ).catch((err) => console.log(err))
+
+        if (!notifications) return
+        this.notifications = notifications.data
+        this.notiCount = this.notifications.filter(notification => !notification.readAt).length
       }
     },
     components: {
@@ -419,6 +508,46 @@
     .vb.vb-dragging-phantom > .vb-dragger > .vb-dragger-styler {
       background-color: #8d8a8a;
     }
+  }
+  .unreadNoti{
+    background-color: #eeeeee;
+  }
+  .notification {
+    padding: 0px !important;
+    margin: 0px !important;
+    
+    // height: 300px !important;
+    // overflow-y: auto !important;
+   }
+  .notiWrap {
+    position: relative;
+    .notiCount {
+      position: absolute;
+      right: 30px;
+      top: 5px;
+      min-width: 20px;
+      height: 20px;
+      line-height: 20px;
+      border-radius: 30px;
+      padding: 0 2px;
+      font-size: 12px;
+      text-align: center;
+      background-color: #f34423;
+      color: white;
+      font-weight: bold;
+    }
+  }
+  .content {
+    width: 250px;
+    .title {
+      white-space: normal;
+      font-size: 0.9rem !important;
+      font-weight: 400;
+    }
+  }
+  .img_url {
+    border: 1px;
+    border-radius: 5px !important;
   }
   </style>
   

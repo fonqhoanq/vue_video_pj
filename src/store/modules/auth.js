@@ -3,13 +3,13 @@ import axios from "axios";
 const BASE_URL = "http://localhost:3000/";
 
 const state = {
-  auth_token: null,
+  auth_token: localStorage.getItem("auth_token"),
   user: {
-    id: null,
-    username: null,
-    email: null,
-    age: null,
-    avatarUrl: null
+    id: localStorage.getItem("id"),
+    username: localStorage.getItem("username"),
+    email: localStorage.getItem("email"),
+    age: localStorage.getItem("age"),
+    avatarUrl: localStorage.getItem("avatarUrl")
   },
   base_url: "http://localhost:3000/"
 };
@@ -122,6 +122,12 @@ const mutations = {
       age: data.data.age,
       avatarUrl: data.data.avatarUrl
     }
+    localStorage.setItem("id", data.data.id);
+    localStorage.setItem("username", data.data.username);
+    localStorage.setItem("email", data.data.email);
+    localStorage.setItem("age", data.data.age);
+    localStorage.setItem("avatarUrl", data.data.avatarUrl);
+
     console.log("state user")
     console.log(state.user)
     state.auth_token = data.headers.authorization;
@@ -142,6 +148,11 @@ const mutations = {
     };
     state.auth_token = null;
     localStorage.removeItem("auth_token");
+    localStorage.removeItem("id");
+    localStorage.removeItem("username");
+    localStorage.removeItem("email");
+    localStorage.removeItem("age");
+    localStorage.removeItem("avatarUrl");
     axios.defaults.headers.common["Authorization"] = null;
   },
 };

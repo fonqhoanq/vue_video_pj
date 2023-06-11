@@ -7,7 +7,7 @@
           </v-avatar>
           <v-img
             v-else-if="getCurrentUser.avatarUrl !== 'no-photo.jpg'"
-            :src="`${getUrl}${getCurrentUser.avatarUrl}`"
+            :src="`${getUrl}${avatar}`"
           ></v-img>
   
           <v-avatar v-else color="red">
@@ -53,6 +53,7 @@
     },
     data: function() {
       return {
+        avatar: localStorage.getItem('avatarUrl'),
         showCommentBtns: false,
         loading: false,
         comment: ''

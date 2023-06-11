@@ -158,14 +158,9 @@
         <v-menu offset-y left v-else>
           <template v-slot:activator="{ on }">
             <v-btn small color="red" depressed fab v-on="on" class="white--text">
-              <v-avatar v-if="!getCurrentUser.avatarUrl">
+              <v-avatar>
                 <img
-                  :src="url"
-                />
-              </v-avatar>
-              <v-avatar v-else>
-                <img
-                  :src="`${getUrl}${getCurrentUser.avatarUrl}`"
+                  :src="`${getUrl}${avatar}`"
                 />
               </v-avatar>
               <!-- <template v-else>
@@ -182,7 +177,7 @@
                 <v-list-item-avatar>
                   <v-avatar>
                     <img
-                    :src="`${getUrl}${getCurrentUser.avatarUrl}`"
+                    :src="`${getUrl}${avatar}`"
                     />
                   </v-avatar>
                   <!-- <template v-else>
@@ -198,7 +193,7 @@
   
                 <v-list-item-content>
                   <v-list-item-title class="text-capitalize">{{
-                    getCurrentUser.username
+                    userName
                   }}</v-list-item-title>
                   <v-list-item-subtitle>{{
                     getCurrentUser.email
@@ -414,6 +409,8 @@
       recording: false,
       notiCount: null,
       notifications: [],
+      avatar: localStorage.getItem('avatarUrl'),
+      userName: localStorage.getItem('username'),
       url: "https://cdn-icons-png.flaticon.com/512/219/219988.png",
       drawer: true,
       items: [
@@ -693,9 +690,7 @@
     mounted() {
       // if (this.$route.query['search-query'])
       //   this.searchText = this.$route.query['search-query']
-      console.log("mounted:")
-      console.log(this.getCurrentUser.avatarUrl)
-      if (this.getCurrentUser) {
+      if (this.isLoggedIn) {
         this.getOwnPlaylists()
         this.getNotifications()
         this.getSubscribedChannels()
@@ -720,19 +715,19 @@
   <style lang="scss">
   .searchBox {
     width: 800px; /* or whatever width you want. */
-    max-width: 800px; /* or whatever width you want. */
+    max-width: 600px; /* or whatever width you want. */
     display: inline-block;
     position: relative;
     .speechButton {
       background: var(--button-color);
       box-shadow: 0 0.5rem 1rem var(--shadow);
       border-radius: 50px;
-      height: 60px;
-      width: 60px;
+      height: 40px !important; 
+      width: 40px !important;
       display: block;
       position: absolute;
-      right: -80px;
-      top: -4px;
+      right: -12%;
+      // top: -4%;
       // left: 50%;
       transform: translateX(-50%);
     }

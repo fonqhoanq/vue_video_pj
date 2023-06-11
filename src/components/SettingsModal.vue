@@ -206,7 +206,7 @@
         categories: ['People', 'Technology', 'Fashion'],
         visibilty: ['Public', 'Private'],
         formData: {
-          channelName: this.$store.getters.getCurrentUser.username,
+          channelName: localStorage.getItem('username'),
           email: this.$store.getters.getCurrentUser.email,
           currentPassword: '',
           newPassword: ''
@@ -215,7 +215,7 @@
           personalInfo: false,
           password: false
         },
-        imgDataUrl: `${this.$store.getters.getUrl}${this.$store.getters.getCurrentUser.avatarUrl}`,
+        imgDataUrl: `${this.$store.getters.getUrl}${localStorage.getItem('avatarUrl')}`,
         url: `http://127.0.0.1:3000/users/${this.$store.getters.getCurrentUser.id}/avatar`,
         headers: { Authorization: `Bearer ${this.$store.getters.getToken}` }
       }

@@ -188,7 +188,7 @@
             </v-img>
             <p class="title font-weight-regular mt-2 mb-2">Watch later</p>
             <div>
-              <p>{{ getCurrentUser.username }}</p>
+              <p>{{ userName }}</p>
               <div class="content">
                 <p class="pr-2">{{ `${watchLaterVideos.length} videos` }}</p>
                 <p class="pr-2">No views</p>
@@ -223,6 +223,7 @@ import InfiniteLoading from 'vue-infinite-loading'
 import WatchLaterService from '@/services/WatchLaterService'
 export default {
   data: () => ({
+    userName: localStorage.getItem('username'),
     loading: false,
     loaded: false,
     errored: false,
