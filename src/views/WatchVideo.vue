@@ -270,7 +270,7 @@
                         :class="[
                           {'playing': ownPlaylist.video.id === video.id}
                           ]"
-                        @click="handlePlayList(ownPlaylist.video.id)"
+                        @click="handleOwnPlaylist(ownPlaylist.video.id)"
                       >
                         <v-list-item-content class="mr-2">
                           <div class="d-flex">
@@ -319,7 +319,7 @@
                         :class="[
                           {'playing': watchLaterVideo.video.id === video.id}
                           ]"
-                        @click="handlePlayList(watchLaterVideo.video.id)"
+                        @click="handleWatchLater(watchLaterVideo.video.id)"
                       >
                         <v-list-item-content class="mr-2">
                           <div class="d-flex">
@@ -653,8 +653,6 @@
   
           if (!video) return this.$router.push('/')
           this.video = video.data
-          console.log('Video data')
-          console.log(this.video)
         } catch (err) {
           this.errored = true
           console.log(err)
@@ -745,12 +743,10 @@
   
         if (typeof videos === 'undefined') return
   
-        // this.singerVideos = videos.data
         if (videos.data.length) {
           this.singerPage += 1
   
           this.singerVideos.push(...videos.data)
-          // console.log(this.videos)
           if ($state) {
             $state.loaded()
           }
@@ -780,14 +776,11 @@
           (obj, index) => 
           videos.data.findIndex((item) => item.id === obj.id) === index
         )
-        console.log("watched videos")
-        console.log(cleanVideos)
         // this.singerVideos = videos.data
         if (videos.data.length) {
           this.watchedPage += 1
       
           this.watchedVideos.push(...cleanVideos)
-          // console.log(this.videos)
           if ($state) {
             $state.loaded()
           }
@@ -810,10 +803,7 @@
             this.loading = false
           })
         if (!playlist) return
-        console.log('playlist')
-        console.log(playlist)
         this.playlist = playlist.data
-        console.log(this.playlistVideos)
       },
       async checkSubscription(id) {
         if (!this.isLoggedIn) return
@@ -829,7 +819,6 @@
           .finally(() => {
             this.loading = false
           })
-        console.log(sub)
         if (!sub) return
   
         if (sub.data.status === 'unsubscribe') this.subscribed = false
@@ -849,10 +838,7 @@
           .finally(() => {
             this.loading = false
           })
-        console.log(feeling)
         if (!feeling) return
-          console.log('feeling')
-          console.log(feeling)
         if (feeling.data.status === 'like') this.feeling = 'like'
         else if (feeling.data.status === 'dislike') this.feeling = 'dislike'
       },
@@ -870,34 +856,28 @@
           case type === 'like' && this.feeling === '':
             this.feeling = 'like'
             this.video.likes++
-            // console.log('new like')
             break
           case type === 'like' && this.feeling === type:
             this.feeling = ''
             this.video.likes--
-            // console.log('remove like')
             break
           case type === 'like' && this.feeling === 'dislike':
             this.feeling = 'like'
             this.video.dislikes--
             this.video.likes++
-            // console.log('change to like')
             break
           case type === 'dislike' && this.feeling === '':
             this.feeling = 'dislike'
             this.video.dislikes++
-            // console.log('new dislike')
             break
           case type === 'dislike' && this.feeling === type:
             this.feeling = ''
             this.video.dislikes--
-            // console.log('remove dislike')
             break
           case type === 'dislike' && this.feeling === 'like':
             this.feeling = 'dislike'
             this.video.likes--
             this.video.dislikes++
-          // console.log('change to dislike')
         }
   
         const feeling = await FeelingService.createFeeling({
@@ -1043,13 +1023,33 @@
       actions() {
         this.getVideo()
       },
-      onVideoEnded() {
-        this.$router.push({
-          name: 'WatchVideo',
-          params: {
-            id: this.videos[0].id
+      nextVideo(videos) {
+        var nextVideoId = ''
+        videos.forEach((video, key) => {
+          if (videos[key].video.id == this.video.id) {
+            nextVideoId = videos[key + 1].video.id
           }
         })
+        return nextVideoId
+      },
+      onVideoEnded() {
+        if (this.$route.params.isWatchLaterList) {
+          const id = this.nextVideo(this.watchLaterVideos)
+          if (id) this.handleWatchLater(id)
+        } else if (this.$route.params.isWatchOwnPlayList) {
+          const id = this.nextVideo(this.ownPlaylist.own_playlist_videos)
+          this.handleOwnPlaylist(id)
+        } else if (this.$route.params.playlist_id) {
+          const id = this.nextVideo(this.playlist.playlist_videos)
+          this.handlePlayList(id)
+        } else {
+          this.$router.push({
+            name: 'WatchVideo',
+            params: {
+              id: this.videos[0].id
+            }
+          })
+        }
       },
       show(event) {
         if (event.target.innerText === 'SHOW MORE') {
@@ -1086,7 +1086,17 @@
             isWatchLaterList: true
           }
         })
-      }
+      },
+      handleOwnPlaylist(id) {
+        this.$router.push({
+          name: 'WatchVideo',
+          params: {
+            id: id,
+            isWatchOwnPlayList: true,
+            own_playlist_id: this.ownPlaylist.id
+          }
+        })
+      },
     },
     components: {
       NavBar,
@@ -1097,7 +1107,6 @@
       RecommendVideoCard
     },
     mounted() {
-      console.log(this.$route.params + 'mounted')
       this.getVideo(this.$route.params.id)
       if (this.isLoggedIn) {
         if (this.$route.params.playlist_id) {
@@ -1113,9 +1122,8 @@
     },
     beforeRouteUpdate(to, from, next) {
       this.page = 1
-      ;(this.loading = false), (this.loaded = false), (this.videos = []), (this.video = {}), (this.playlist = {})
+      ;(this.loading = false), (this.loaded = false), (this.videos = []), (this.video = {}), (this.playlist = {}), (this.watchLaterVideos = []), (this.ownPlaylist = [])
       this.infiniteId += 1
-      console.log('to params' + to.params.id)
       this.getVideo(to.params.id)
       let video = document.getElementById('videoPlayer')
       if (this.isLoggedIn) {

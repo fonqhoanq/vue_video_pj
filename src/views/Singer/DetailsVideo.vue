@@ -5,6 +5,12 @@
       <v-btn text small class="pl-0" @click="$router.go(-1)"
         ><v-icon left>mdi-arrow-left</v-icon> Channel videos</v-btn
       >
+      <template>
+        <v-alert
+          v-if="!validDate"
+          type="error"
+        >Invalid schedule time. Please select a future date and time</v-alert>
+      </template>
       <h2 class="mt-5">Video details</h2>
       <v-row>
         <v-col cols="8">
@@ -68,7 +74,14 @@
               >
                 <div class="dateWrap">
                   <p class="title">Schedule At</p>
-                  <date-time-picker class="mb-4 ml-2 date" v-model="formData.upload_video_at" :model-value="formData.upload_video_at" @update-value="updateTime" />                  
+                  <date-time-picker 
+                    class="mb-4 ml-2 date"
+                    v-model="formData.upload_video_at" 
+                    :model-value="formData.upload_video_at" 
+                    v-on:invalidDate="validDate = false"
+                    v-on:validDate="validDate = true"
+                    @update-value="updateTime" 
+                  />                  
                 </div>
               </ValidationProvider>
               <ValidationProvider
@@ -106,6 +119,7 @@
                   :loading="submitLoading"
                   type="submit"
                   class="primary"
+                  :disabled="!validDate"
                   depressed
                   >Submit</v-btn
                 >
@@ -156,6 +170,7 @@ export default {
       submitLoading: false,
       categoryLoading: false,
       hashTagLoading: false,
+      validDate: true,
       value: 0,
       show: false,
       rules: [
@@ -198,8 +213,6 @@ export default {
 
       if (!video) return
       video = video.data
-      console.log('video')
-      console.log(video)
       this.url = `${this.getUrl}videos/${video.id}/thumbnails`
 
       this.formData.title = video.title
@@ -215,14 +228,17 @@ export default {
     async submit() {
       // if (this.$route.name === 'Dashboard')
       this.submitLoading = true
+      if (!this.validDate) {
+        this.submitLoading = false
+        return
+      }
       this.formData.category = this.categories.find(
         (category) => category.title === this.formData.category
       ).id
       this.formData.hashTags = this.formData.hashTags.map((hashtag) => {
-          return this.hashTags.find((hashTag) => hashTag.title === hashtag).id
-        })
-      console.log('data')
-      console.log(this.formData.upload_video_at)
+        return this.hashTags.find((hashTag) => hashTag.title === hashtag).id
+      })
+      
       const video = await VideoService.updateVideo(this.$route.params.id, {
         video: {
           title: this.formData.title,
@@ -242,7 +258,6 @@ export default {
       if (!video) return
 
       this.$router.push('/singer/videos')
-      // console.log('submittied')
     },
     async getCategories() {
       this.categoryLoading = true
@@ -256,8 +271,6 @@ export default {
         return category.title
       })
       this.categories = categories.data
-      console.log("this categories:")
-      console.log(this.categories)
     },
     async getHashTags() {
       this.hashTagLoading = true
