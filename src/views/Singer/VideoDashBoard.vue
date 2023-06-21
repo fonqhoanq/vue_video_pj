@@ -81,7 +81,7 @@ export default {
   data: () => ({
     subscribersDialog: false,
     timeItems: ['This week', 'Last week'],
-    selected: 'This week',
+    selected: 'Last week',
     viewWeeklyLabels: [],
     viewWeeklyData: [],
     viewYearlyLabels: [
@@ -130,7 +130,6 @@ export default {
         }
         this.items[0].monthly += this.viewYearlyData[i]
       }
-      console.log(this.viewYearlyData)
     },
     async getViewWeeklyChartData() {
       const chartData = await SingerService.getWeeklyViewChart({
@@ -171,8 +170,6 @@ export default {
         this.items[0].weekly += this.viewWeeklyData[i]
         const dayofweek = new Date().getDay()
         if (i == dayofweek) {
-          console.log('dayofweek')
-          console.log(dayofweek)
           this.items[0].today = this.viewWeeklyData[i-1]
         }
       }

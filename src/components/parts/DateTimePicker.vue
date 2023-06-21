@@ -42,10 +42,7 @@ export default {
     }
   },
   created () {
-    console.log(this.modelValue)
     this.date = dayjs(this.modelValue).format('YYYY-MM-DD')
-    console.log('date')
-    console.log(this.date)
     this.hour = dayjs(this.modelValue).format('HH')
     this.minute = dayjs(this.modelValue).format('mm')
   },
@@ -55,11 +52,29 @@ export default {
         this.hour = this.minute = null
         this.$emit('update:modelValue', null)
       } else {
+        let check = true
+        if (this.date < dayjs().format('YYYY-MM-DD')) {
+          this.$emit('invalidDate')
+          check = false
+        }
+        if (this.date == dayjs().format('YYYY-MM-DD')) {
+          if (this.hour < dayjs().format('HH')) {
+            this.$emit('invalidDate')
+            check = false
+          }
+          if (this.hour == dayjs().format('HH')) {
+            if (this.minute < dayjs().format('mm')) {
+              this.$emit('invalidDate')
+              check = false
+            }
+          }
+        }
+        if (check) {
+          this.$emit('validDate')
+        }
         if (!this.hour) this.hour = '00'
         if (!this.minute) this.minute = '00'
         const newDateTime = `${this.date} ${this.hour}:${this.minute}`
-        console.log('date')
-        console.log(newDateTime)
         this.$emit('update:modelValue', newDateTime)
         this.$emit('update-value', newDateTime)
       }

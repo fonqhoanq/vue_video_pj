@@ -73,6 +73,12 @@
         </v-card-text>
         <v-card-text v-else>
           <h2 class="mb-6">Details</h2>
+          <template>
+            <v-alert
+              v-if="!validDate"
+              type="error"
+            >Invalid schedule time. Please select a future date and time</v-alert>
+          </template>
           <v-row>
             <v-col
               order="last"
@@ -134,9 +140,21 @@
                       v-model="formData.visibility"
                     ></v-select>
                   </ValidationProvider>
-                  <div v-if="formData.visibility === 'Schedule'">
-                    <date-time-picker v-model="formData.upload_video_at" @update-value="updateTime" />
-                  </div>
+                  <ValidationProvider
+                    v-if="formData.visibility === 'Schedule'"
+                    name="Schedule At"
+                  >
+                    <div class="dateWrap">
+                      <p class="title">Schedule At</p>
+                      <date-time-picker
+                        class="mb-4 ml-2 date"
+                        v-model="formData.upload_video_at" 
+                        @update-value="updateTime" 
+                        v-on:invalidDate="validDate = false"
+                        v-on:validDate="validDate = true"  
+                      />                  
+                    </div>
+                  </ValidationProvider>
                   <ValidationProvider
                     v-slot="{ errors }"
                     name="Cateogry"
@@ -173,6 +191,7 @@
                       :loading="submitLoading"
                       type="submit"
                       class="primary"
+                      :disabled="!validDate"
                       depressed
                       >Submit</v-btn
                     >
@@ -193,8 +212,7 @@
                 field="thumbnails"
                 @crop-success="cropSuccess"
                 @crop-upload-success="cropUploadSuccess"
-                :value="show"
-                :model="show"
+                v-model="show"
                 :width="1280"
                 :height="720"
                 :url= "url"
@@ -231,7 +249,7 @@
   </template>
   
   <script>
-  import myUpload from "/home/dell/vue_video_pj/node_modules/vue-image-crop-upload/upload-2.vue";
+  import myUpload from 'vue-image-crop-upload'
   import VideoService from "@/services/VideoService";
   import { mapGetters } from 'vuex'
   import HashTagService from '@/services/HashTagService'
@@ -249,6 +267,7 @@
         submitLoading: false,
         categoryLoading: false,
         hashTagLoading: false,
+        validDate: true,
         interval: {},
         value: 0,
         show: false,
@@ -336,7 +355,8 @@
             description: this.formData.description,
             category_id: this.categoryId(),
             video_status: this.convertStatus(),
-            hash_tags: this.formData.hashTags
+            hash_tags: this.formData.hashTags,
+            singer_id: this.getCurrentSinger.id
           },
           upload_video_at: this.formData.upload_video_at
         })
@@ -400,7 +420,6 @@
         console.log("-------- crop success --------");
         console.log(field);
         this.imgDataUrl = imgDataUrl;
-        console.log(this.imgDataUrl)
       },
       cropUploadSuccess(jsonData, field){
 				console.log('-------- upload success --------');
@@ -447,6 +466,17 @@
     padding-top: 8em;
     padding-bottom: 8em;
     border: 2px dashed rgb(209, 209, 209);
+  }
+  .dateWrap {
+    background: #f0f0f0;
+    .title {
+      font-size: 12px !important;
+      font-weight: 350;
+      margin: 0 0 0 10px !important;
+    }
+    .date {
+      color: #21375a !important;
+    }
   }
   </style>
   

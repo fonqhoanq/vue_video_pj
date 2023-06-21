@@ -323,6 +323,7 @@
   import NotificationService from '@/services/NotificationService'
   import UploadVideoModal from '@/components/UploadVideoModal'
   import SingerSettingsModal from '@/components/Singers/SingerSettingsModal'
+  import moment from "moment";
 
   export default {
     name: 'StudioNavBar',
@@ -403,6 +404,9 @@
       ...mapGetters(['getCurrentSinger', 'getUrl', 'isSingerLoggedIn'])
     },
     methods: {
+      dateFormatter(date) {
+        return moment(date).fromNow();
+      },
       search() {
         console.log('hello')
       },
@@ -419,8 +423,7 @@
       },
       async getNotifications() {
         const params = {
-          singer_id: this.getCurrentUser.id,
-          noti_type: 'recent_upload_video_notification'
+          singer_id: this.getCurrentSinger.id
         }
         const notifications = await NotificationService.getSingerNotifications(
           params
@@ -429,6 +432,17 @@
         if (!notifications) return
         this.notifications = notifications.data
         this.notiCount = this.notifications.filter(notification => !notification.readAt).length
+      },
+      async updateNotification(notification) {
+        const newNotification = NotificationService.updateSingerNotification(notification.id)
+          .catch((err)=> {
+            console.log(err)
+          })
+        if (!newNotification) return
+        this.$router.push({
+          name: 'WatchVideo',
+          params: {id: notification.videoId}
+        })
       }
     },
     components: {
@@ -436,6 +450,7 @@
     },
     mounted() {
       this.drawer = this.$vuetify.breakpoint.mdAndDown ? false : true
+      this.getNotifications()
     }
   }
   </script>
