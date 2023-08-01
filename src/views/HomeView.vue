@@ -18,7 +18,7 @@
 
       <main v-else>
         <div v-if="isLoggedIn && musicType === ''">
-          <h3 class="headline font-weight-medium" @click="showInfor">Playlists</h3>
+          <h3 class="headline font-weight-medium" @click="showInfor">Recommended Playlists</h3>
           <v-slide-group class="pa-4" multiple show-arrows>
             <v-slide-item
               v-for="(playlist, i) in loading ? 12 : playlists"
@@ -27,7 +27,7 @@
               <v-skeleton-loader
                 type="card-avatar" 
                 :loading="loading"
-                class="mr-1"
+                class="mr-4"
               >
                 <playlist-card
                   :card="{ maxWidth: 350 }"
@@ -36,6 +36,89 @@
               </v-skeleton-loader>
             </v-slide-item>
           </v-slide-group>
+          <h3 class="headline font-weight-medium" @click="showInfor">Only for {{ userName }}</h3>
+          <v-slide-group class="pa-4" multiple show-arrows>
+            <v-slide-item
+              v-for="(playlist, i) in loading ? 12 : ownPlaylists"
+              :key="i"
+            >
+              <v-skeleton-loader
+                type="card-avatar" 
+                :loading="loading"
+                class="mr-4"
+              >
+                <playlist-card
+                  :card="{ maxWidth: 350 }"
+                  :playlist="playlist"
+                  :isOwnPlaylist="true"
+                ></playlist-card>
+              </v-skeleton-loader>
+            </v-slide-item>
+          </v-slide-group>
+          <h3 class="headline font-weight-medium" @click="showInfor">Singer Playlists</h3>
+          <v-slide-group class="pa-4" multiple show-arrows>
+            <v-slide-item
+              v-for="(playlist, i) in loading ? 12 : singerPlaylists"
+              :key="i"
+            >
+              <v-skeleton-loader
+                type="card-avatar" 
+                :loading="loading"
+                class="mr-4"
+              >
+                <playlist-card
+                  :card="{ maxWidth: 350 }"
+                  :playlist="playlist"
+                  :isSingerPlaylist="true"
+                ></playlist-card>
+              </v-skeleton-loader>
+            </v-slide-item>
+          </v-slide-group>
+          <h3 class="headline font-weight-medium" @click="showInfor">Trending Videos</h3>
+          <v-slide-group class="pa-4" multiple show-arrows>
+            <v-slide-item
+              v-for="(video, i) in loading ? 12 : trendingVideos"
+              :key="i"
+            >
+              <v-skeleton-loader
+                type="card-avatar" 
+                :loading="loading"
+                class="mr-4"
+              >
+                <video-card
+                  :card="{ maxWidth: 350 }"
+                  :video="video"
+                  :channel="video.singer"
+                  v-on:openPlaylistDialog="handleShowSavedPlaylistDialog(video)"
+                  v-on:addWatchLater="handleAddWatchLater(video)"
+                  v-on:removeWatchLater="handleRemoveWatchLater"
+                ></video-card>
+              </v-skeleton-loader>
+            </v-slide-item>
+          </v-slide-group>
+          <h3 class="headline font-weight-medium" @click="showInfor">New Releases</h3>
+          <v-slide-group class="pa-4" multiple show-arrows>
+            <v-slide-item
+              v-for="(video, i) in loading ? 12 : newReleaseVideos"
+              :key="i"
+            >
+              <v-skeleton-loader
+                type="card-avatar" 
+                :loading="loading"
+                class="mr-4"
+              >
+                <video-card
+                  :card="{ maxWidth: 350 }"
+                  :video="video"
+                  :channel="video.singer"
+                  v-on:openPlaylistDialog="handleShowSavedPlaylistDialog(video)"
+                  v-on:addWatchLater="handleAddWatchLater(video)"
+                  v-on:removeWatchLater="handleRemoveWatchLater"
+                ></video-card>
+              </v-skeleton-loader>
+            </v-slide-item>
+          </v-slide-group>
+
         </div>
         <div class="wrapBtn">
           <v-btn
@@ -116,7 +199,7 @@
             @click="changeVideoType('R&B')"
           >R&B</v-btn>
         </div>
-        <h3 class="headline font-weight-medium">Recommended</h3>
+        <h3 class="headline font-weight-medium">Videos</h3>
         <v-row>
           <v-col
             cols="12"
@@ -177,7 +260,7 @@
       :check-playlists="checkPlaylists"
       :open-dialog="showSavedPlaylistDialog"
       v-on:closeDialog="showSavedPlaylistDialog = false"
-      v-on:openSnackbar="snackbar = true"
+      v-on:openSnackbar="openSnackBar"
     >
     </saved-playlist-modal>
     <v-snackbar  :timeout="timeout" v-model="snackbar">
@@ -211,8 +294,13 @@ export default {
     showSavedPlaylistDialog: false,
     message: 'Create playlist successfully!',
     videos: [],
+    trendingVideos: [],
+    newReleaseVideos: [],
     currentVideo: {},
     playlists: [],
+    singerPlaylists: [],
+    ownPlaylists: [],
+    userName: localStorage.getItem('username'),
     checkPlaylists: [],
     page: 1,
     musicType: ''
@@ -280,8 +368,63 @@ export default {
         })
       if (typeof playlists === 'undefined') return
       this.playlists = playlists.data
-      console.log('playlist: ')
-      console.log(playlists)
+    },
+    async getPlaylistBySingerTopic() {
+      this.loading = true
+      const singerPlaylists = await PlaylistService.getPlaylistBySingerTopic()
+        .catch((err) => {
+          console.log(err)
+          this.errored = true
+        })
+        .finally(() => {
+          this.loading = false
+        })
+      if (typeof singerPlaylists === 'undefined') return
+      this.singerPlaylists = singerPlaylists.data
+    },
+    async getTrendingVideos() {
+      const videos = await VideoService.getTrendingVideo({
+        page: this.page
+      })
+        .catch((err) => {
+          console.log(err)
+          this.errored = true
+        })
+        .finally(() => {
+          this.loading = false
+        })
+      if (typeof videos === 'undefined') return
+      this.trendingVideos = videos.data
+    },
+    async getOwnPlaylists() {
+      this.loading = true
+      const params = {
+        user_id: this.getCurrentUser.id
+      }
+      const ownPlaylists = await OwnPlaylistService.getMixPlaylist(params)
+        .catch((err) => {
+          console.log(err)
+          this.errored = true
+        })
+        .finally(() => {
+          this.loading = false
+        })
+      if (typeof ownPlaylists === 'undefined') return
+      console.log("hehe")
+      console.log(ownPlaylists.data)
+      this.ownPlaylists = ownPlaylists.data
+    },
+    async getNewReleaseVideos() {
+      const videos = await VideoService.getNewReleaseVideo()
+        .catch((err) => {
+          console.log(err)
+          this.errored = true
+        })
+        .finally(() => {
+          this.loading = false
+        })
+      if (typeof videos === 'undefined') return
+      this.newReleaseVideos = videos.data
     },
     dateFormatter(date) {
       return moment(date).fromNow()
@@ -333,11 +476,22 @@ export default {
       console.log(this.getCurrentUser.username)
       console.log(this.getCurrentUser.avatarUrl)
       console.log(this.getCurrentUser.email)      
+    },
+    openSnackBar() {
+      this.message = 'Create playlist successfully!'
+      this.snackbar = true
+      window.setInterval(() => {
+        window.location.reload()
+      }, 4000)
     }
   },
   mounted() {
     if (this.isLoggedIn) {
       this.getPlaylists()
+      this.getPlaylistBySingerTopic()
+      this.getTrendingVideos()
+      this.getNewReleaseVideos()
+      this.getOwnPlaylists()
     }
     this.getVideos()
   },

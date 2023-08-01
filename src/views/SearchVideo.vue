@@ -21,8 +21,8 @@
             <template v-if="results.length === 0">
               <p class="text-center">Ops! No search results</p>
             </template>
-            <div
-              v-else
+            <template v-else>
+              <div
               v-for="(result, i) in loading ? 5 : results"
               :key="i"
               class="mb-5"
@@ -35,7 +35,7 @@
                 large
               >
                 <v-card
-                  :to="`/channels/${result.id}`"
+                  @click="handleWatchChannel(result.id, result.channelName)"
                   class="card mb-10"
                   v-if="typeof result.channelName !== 'undefined'"
                   tile
@@ -87,7 +87,7 @@
                   </v-row>
                 </v-card>
                 <v-card
-                  :to="`/watch/${result.id}`"
+                  @click="handleWatchVideo(result.id, result.title)"
                   class="card mb-10"
                   tile
                   flat
@@ -128,6 +128,8 @@
                 </v-card>
               </v-skeleton-loader>
             </div>
+            </template>
+
             <infinite-loading
               :identifier="infiniteId"
               @infinite="getSearchResults"
@@ -168,7 +170,7 @@
   import { mapGetters } from 'vuex'
   import SearchService from '@/services/SearchService'
   import NavBar from '@/components/NavBar'
-
+  import HistoryService from '@/services/HistoryService'
   export default {
     data: () => ({
       errored: false,
@@ -180,7 +182,7 @@
       infiniteId: +new Date()
     }),
     computed: {
-      ...mapGetters(['getUrl'])
+      ...mapGetters(['getUrl', 'isLoggedIn', 'getCurrentUser'])
     },
     methods: {
       async getSearchResults($state) {
@@ -220,6 +222,47 @@
             $state.complete()
           }
         }
+      },
+      handleWatchChannel(channelId, channelName) {
+        this.saveHistorySearch(channelName)
+        this.$router.push({
+          name: 'ChannelHome',
+          params: { id: channelId }
+        })
+      },
+      handleWatchVideo(videoId, title) {
+        this.saveHistorySearch(title)
+        this.$router.push({
+          name: 'WatchVideo',
+          params: { id: videoId }
+        })
+      },
+      handleText(text) {
+        let result = ''
+        if (text.includes('(')) {
+          result = text.substring(0, text.indexOf('('))
+        }
+
+        else if (text.includes('Official')) {
+          result =  text.replace('Official', '')
+        } else {
+          result = text
+        }
+        
+        return result.toLowerCase()
+      },
+      async saveHistorySearch(text) {
+        const data = {
+          history_type: 'search',
+          search_text: this.handleText(text),
+          user_id: this.getCurrentUser.id,
+          video_id: 2
+        }
+  
+        if (this.isLoggedIn)
+          await HistoryService.createHistory(data).catch((err) =>
+            console.log(err)
+          )
       }
     },
     components: {

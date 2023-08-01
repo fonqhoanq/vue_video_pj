@@ -50,7 +50,7 @@ const actions = {
     });
   },
   loginSinger({ commit }, payload) {
-    new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       axios
         .post(`${BASE_URL}singers/sign_in`, payload)
         .then((response) => {
