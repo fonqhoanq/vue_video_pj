@@ -1,0 +1,118 @@
+Date : 2023-07-26 15:25:43
+Directory : /home/dell/local/vue_video_pj/src
+Total : 72 files,  12359 codes, 200 comments, 566 blanks, all 13125 lines
+
+Languages
++------------+------------+------------+------------+------------+------------+
+| language   | files      | code       | comment    | blank      | total      |
++------------+------------+------------+------------+------------+------------+
+| vue        |         47 |     11,396 |        137 |        492 |     12,025 |
+| JavaScript |         24 |        962 |         63 |         73 |      1,098 |
+| XML        |          1 |          1 |          0 |          1 |          2 |
++------------+------------+------------+------------+------------+------------+
+
+Directories
++------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                         | files      | code       | comment    | blank      | total      |
++------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                            |         72 |     12,359 |        200 |        566 |     13,125 |
+| . (Files)                                                                    |          2 |         87 |         11 |         15 |        113 |
+| assets                                                                       |          1 |          1 |          0 |          1 |          2 |
+| components                                                                   |         20 |      5,003 |         71 |        246 |      5,320 |
+| components (Files)                                                           |         11 |      3,079 |         58 |        155 |      3,292 |
+| components/Singers                                                           |          3 |      1,070 |         12 |         56 |      1,138 |
+| components/charts                                                            |          3 |        237 |          0 |         12 |        249 |
+| components/comments                                                          |          2 |        522 |          1 |         22 |        545 |
+| components/parts                                                             |          1 |         95 |          0 |          1 |         96 |
+| layouts                                                                      |          1 |         20 |          0 |          3 |         23 |
+| plugins                                                                      |          1 |          5 |          0 |          3 |          8 |
+| router                                                                       |          1 |        155 |          5 |          5 |        165 |
+| services                                                                     |         16 |        317 |          0 |         35 |        352 |
+| store                                                                        |          5 |        422 |         47 |         17 |        486 |
+| store (Files)                                                                |          1 |         22 |         45 |          3 |         70 |
+| store/modules                                                                |          4 |        400 |          2 |         14 |        416 |
+| views                                                                        |         25 |      6,349 |         66 |        241 |      6,656 |
+| views (Files)                                                                |         11 |      3,632 |         54 |        137 |      3,823 |
+| views/Auth                                                                   |          4 |        876 |          0 |         29 |        905 |
+| views/Channel                                                                |          1 |        318 |          3 |         19 |        340 |
+| views/Singer                                                                 |          9 |      1,523 |          9 |         56 |      1,588 |
++------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| filename                                                                     | language   | code       | comment    | blank      | total      |
++------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| /home/dell/local/vue_video_pj/src/App.vue                                    | vue        |         24 |          0 |          2 |         26 |
+| /home/dell/local/vue_video_pj/src/assets/logo.svg                            | XML        |          1 |          0 |          1 |          2 |
+| /home/dell/local/vue_video_pj/src/components/HelloWorld.vue                  | vue        |        141 |          0 |         11 |        152 |
+| /home/dell/local/vue_video_pj/src/components/NavBar.vue                      | vue        |        834 |         34 |         34 |        902 |
+| /home/dell/local/vue_video_pj/src/components/PlaylistCard.vue                | vue        |        127 |          0 |         11 |        138 |
+| /home/dell/local/vue_video_pj/src/components/RecommendVideoCard.vue          | vue        |         67 |          2 |          3 |         72 |
+| /home/dell/local/vue_video_pj/src/components/SavedPlaylistModal.vue          | vue        |        320 |          0 |         12 |        332 |
+| /home/dell/local/vue_video_pj/src/components/SettingsModal.vue               | vue        |        372 |          0 |         24 |        396 |
+| /home/dell/local/vue_video_pj/src/components/SigninModal.vue                 | vue        |         41 |          0 |          4 |         45 |
+| /home/dell/local/vue_video_pj/src/components/Singers/ReplyCommentModal.vue   | vue        |        168 |          0 |          5 |        173 |
+| /home/dell/local/vue_video_pj/src/components/Singers/SingerSettingsModal.vue | vue        |        373 |          0 |         24 |        397 |
+| /home/dell/local/vue_video_pj/src/components/Singers/StudioNavBar.vue        | vue        |        529 |         12 |         27 |        568 |
+| /home/dell/local/vue_video_pj/src/components/StudioNavBar.vue                | vue        |        390 |         12 |         23 |        425 |
+| /home/dell/local/vue_video_pj/src/components/SubscribersModal.vue            | vue        |        124 |         10 |          7 |        141 |
+| /home/dell/local/vue_video_pj/src/components/UploadVideoModal.vue            | vue        |        465 |          0 |         17 |        482 |
+| /home/dell/local/vue_video_pj/src/components/VideoCard.vue                   | vue        |        198 |          0 |          9 |        207 |
+| /home/dell/local/vue_video_pj/src/components/charts/BarChart.vue             | vue        |         76 |          0 |          4 |         80 |
+| /home/dell/local/vue_video_pj/src/components/charts/LineChart.vue            | vue        |         94 |          0 |          4 |         98 |
+| /home/dell/local/vue_video_pj/src/components/charts/PieChart.vue             | vue        |         67 |          0 |          4 |         71 |
+| /home/dell/local/vue_video_pj/src/components/comments/AddComment.vue         | vue        |        104 |          0 |          6 |        110 |
+| /home/dell/local/vue_video_pj/src/components/comments/CommentList.vue        | vue        |        418 |          1 |         16 |        435 |
+| /home/dell/local/vue_video_pj/src/components/parts/DateTimePicker.vue        | vue        |         95 |          0 |          1 |         96 |
+| /home/dell/local/vue_video_pj/src/layouts/DefaultLayout.vue                  | vue        |         20 |          0 |          3 |         23 |
+| /home/dell/local/vue_video_pj/src/main.js                                    | JavaScript |         63 |         11 |         13 |         87 |
+| /home/dell/local/vue_video_pj/src/plugins/vuetify.js                         | JavaScript |          5 |          0 |          3 |          8 |
+| /home/dell/local/vue_video_pj/src/router/index.js                            | JavaScript |        155 |          5 |          5 |        165 |
+| /home/dell/local/vue_video_pj/src/services/Api.js                            | JavaScript |         22 |          0 |          5 |         27 |
+| /home/dell/local/vue_video_pj/src/services/AuthenticationService.js          | JavaScript |         26 |          0 |          2 |         28 |
+| /home/dell/local/vue_video_pj/src/services/CategoryService.js                | JavaScript |          6 |          0 |          2 |          8 |
+| /home/dell/local/vue_video_pj/src/services/CommentService.js                 | JavaScript |         21 |          0 |          2 |         23 |
+| /home/dell/local/vue_video_pj/src/services/FeelingService.js                 | JavaScript |         12 |          0 |          2 |         14 |
+| /home/dell/local/vue_video_pj/src/services/HashTagService.js                 | JavaScript |          6 |          0 |          2 |          8 |
+| /home/dell/local/vue_video_pj/src/services/HistoryService.js                 | JavaScript |         18 |          0 |          2 |         20 |
+| /home/dell/local/vue_video_pj/src/services/NotificationService.js            | JavaScript |         19 |          0 |          2 |         21 |
+| /home/dell/local/vue_video_pj/src/services/OwnPlaylistService.js             | JavaScript |         24 |          0 |          2 |         26 |
+| /home/dell/local/vue_video_pj/src/services/PlaylistService.js                | JavaScript |         15 |          0 |          2 |         17 |
+| /home/dell/local/vue_video_pj/src/services/ReplyService.js                   | JavaScript |         12 |          0 |          2 |         14 |
+| /home/dell/local/vue_video_pj/src/services/SearchService.js                  | JavaScript |          6 |          0 |          2 |          8 |
+| /home/dell/local/vue_video_pj/src/services/SingerService.js                  | JavaScript |         24 |          0 |          2 |         26 |
+| /home/dell/local/vue_video_pj/src/services/SubscriptionService.js            | JavaScript |         30 |          0 |          2 |         32 |
+| /home/dell/local/vue_video_pj/src/services/VideoService.js                   | JavaScript |         61 |          0 |          2 |         63 |
+| /home/dell/local/vue_video_pj/src/services/WatchLaterService.js              | JavaScript |         15 |          0 |          2 |         17 |
+| /home/dell/local/vue_video_pj/src/store/index.js                             | JavaScript |         22 |         45 |          3 |         70 |
+| /home/dell/local/vue_video_pj/src/store/modules/auth.js                      | JavaScript |        161 |          0 |          4 |        165 |
+| /home/dell/local/vue_video_pj/src/store/modules/comment.js                   | JavaScript |         37 |          2 |          3 |         42 |
+| /home/dell/local/vue_video_pj/src/store/modules/ownplaylist.js               | JavaScript |         47 |          0 |          3 |         50 |
+| /home/dell/local/vue_video_pj/src/store/modules/singerauth.js                | JavaScript |        155 |          0 |          4 |        159 |
+| /home/dell/local/vue_video_pj/src/views/AboutView.vue                        | vue        |         33 |          2 |          6 |         41 |
+| /home/dell/local/vue_video_pj/src/views/Auth/SignIn.vue                      | vue        |        124 |          0 |          5 |        129 |
+| /home/dell/local/vue_video_pj/src/views/Auth/SignUp.vue                      | vue        |        309 |          0 |          7 |        316 |
+| /home/dell/local/vue_video_pj/src/views/Auth/SingerSignIn.vue                | vue        |        130 |          0 |          5 |        135 |
+| /home/dell/local/vue_video_pj/src/views/Auth/SingerSignUp.vue                | vue        |        313 |          0 |         12 |        325 |
+| /home/dell/local/vue_video_pj/src/views/Channel/ChannelHome.vue              | vue        |        318 |          3 |         19 |        340 |
+| /home/dell/local/vue_video_pj/src/views/DashBoard.vue                        | vue        |         61 |          0 |          4 |         65 |
+| /home/dell/local/vue_video_pj/src/views/HistoryVideo.vue                     | vue        |        378 |          8 |         12 |        398 |
+| /home/dell/local/vue_video_pj/src/views/HomeView.vue                         | vue        |        468 |          0 |          7 |        475 |
+| /home/dell/local/vue_video_pj/src/views/LikedVideo.vue                       | vue        |        168 |          1 |          9 |        178 |
+| /home/dell/local/vue_video_pj/src/views/OwnPlaylistVideo.vue                 | vue        |        408 |          0 |          8 |        416 |
+| /home/dell/local/vue_video_pj/src/views/SearchVideo.vue                      | vue        |        266 |         12 |         15 |        293 |
+| /home/dell/local/vue_video_pj/src/views/Singer/CommentView.vue               | vue        |        248 |          4 |         12 |        264 |
+| /home/dell/local/vue_video_pj/src/views/Singer/DashBoard.vue                 | vue        |        231 |          0 |          6 |        237 |
+| /home/dell/local/vue_video_pj/src/views/Singer/DetailsVideo.vue              | vue        |        332 |          1 |         13 |        346 |
+| /home/dell/local/vue_video_pj/src/views/Singer/Index.vue                     | vue        |         10 |          0 |          2 |         12 |
+| /home/dell/local/vue_video_pj/src/views/Singer/SubscriberDashBoard.vue       | vue        |        147 |          0 |          3 |        150 |
+| /home/dell/local/vue_video_pj/src/views/Singer/UploadVideo.vue               | vue        |         16 |          0 |          1 |         17 |
+| /home/dell/local/vue_video_pj/src/views/Singer/VideoDashBoard.vue            | vue        |        182 |          0 |          2 |        184 |
+| /home/dell/local/vue_video_pj/src/views/Singer/VideoView.vue                 | vue        |        233 |          4 |         12 |        249 |
+| /home/dell/local/vue_video_pj/src/views/Singer/WatchedHourDashBoard.vue      | vue        |        124 |          0 |          5 |        129 |
+| /home/dell/local/vue_video_pj/src/views/SubscribedVideo.vue                  | vue        |        134 |          0 |          7 |        141 |
+| /home/dell/local/vue_video_pj/src/views/TrendingVideo.vue                    | vue        |        165 |          2 |          9 |        176 |
+| /home/dell/local/vue_video_pj/src/views/WatchLaterVideo.vue                  | vue        |        356 |          0 |         12 |        368 |
+| /home/dell/local/vue_video_pj/src/views/WatchVideo.vue                       | vue        |      1,195 |         29 |         48 |      1,272 |
+| Total                                                                        |            |     12,359 |        200 |        566 |     13,125 |
++------------------------------------------------------------------------------+------------+------------+------------+------------+------------+

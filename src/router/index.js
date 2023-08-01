@@ -101,7 +101,7 @@ const routes = [
   },
   {
     path: '/channels/:id',
-    name: ChannelHome,
+    name: 'ChannelHome',
     component: ChannelHome
   },
   {

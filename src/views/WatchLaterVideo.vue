@@ -68,13 +68,14 @@
                         </v-col>
                         <v-col>
                           <div class="ml-2">
-                            <v-card-title
-                              class="pl-2 pt-0 subtitle-1 font-weight-bold d-flex justify-space-between"
-                              style="line-height: 1"
-                            >
-                              {{ watchLaterVideo.video.title }}
-  
-                          
+                            <div class="contentt">
+                              <v-card-title
+                                class="pl-2 pt-0 subtitle-1 font-weight-bold d-flex justify-space-between"
+                                style="line-height: 1"
+                              >
+                                {{ watchLaterVideo.video.title }}
+                              </v-card-title>
+                                                      
                               <v-menu offset-y left>
                                 <template v-slot:activator="{ on }">
                                   <v-btn text @click="deletewatchLaterVideo(watchLaterVideo.id)" v-on="on">
@@ -107,7 +108,8 @@
                                   </v-list>
                                 </v-card>
                               </v-menu>
-                            </v-card-title>
+                            </div>
+
   
                             <v-card-subtitle
                               class="pl-2 pt-2 pb-0"
@@ -356,5 +358,10 @@ export default {
     font-size: 100px;
     color: black;
   }
+}
+.contentt {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 10px;
 }
 </style>

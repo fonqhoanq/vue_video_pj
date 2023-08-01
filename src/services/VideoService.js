@@ -31,6 +31,9 @@ export default {
       params
     })
   },
+  getNewReleaseVideo() {
+    return Api().get('videos/new_release')
+  },
   getWatchedVideos(params) {
     return Api().get('videos/watched', {
       params

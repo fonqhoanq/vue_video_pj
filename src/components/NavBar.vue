@@ -9,16 +9,46 @@
         >
         <v-spacer></v-spacer>
         <div class="d-flex searchBox" >
-          <v-text-field
-            flat
-            hide-details
-            append-icon="mdi-magnify"
-            placeholder="Search"
-            outlined
-            dense
-            v-model="searchText"
-            @click:append="search"
-          ></v-text-field>
+            <v-menu
+              offset-y
+              :close-on-content-click="false"
+              transition="scale-transition"
+            >
+            <template v-slot:activator="{ on: menu }">
+              <v-text-field
+                flat
+                hide-details
+                append-icon="mdi-magnify"
+                placeholder="Search"
+                outlined
+                dense
+                v-model="searchText"
+                @click:append="search"
+                v-on="{ ...menu }"
+              ></v-text-field>
+            </template>
+            <v-card class="searchCard">
+              <v-list>
+                <v-list-item 
+                  v-for="(item, i) in historyList" 
+                  :key='i' 
+                  class="searchHistory"
+                >
+                  <v-list-item-icon @click="searchBy(item.text)">
+                    <v-icon>mdi-history</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content @click="searchBy(item.text)">
+                    {{ item.text }}
+                  </v-list-item-content>
+                  <v-list-item-action>
+                    <v-btn class="btnRemove" @click="removeSearchHistory(item.id)">
+                      Remove
+                    </v-btn>
+                  </v-list-item-action>
+                </v-list-item>
+              </v-list>
+            </v-card>
+          </v-menu>
           <v-tooltip bottom>
             <template v-slot:activator="{ on: tooltip }">
               <v-btn icon class="speechButton" v-on="{ ...tooltip}" @click.prevent="startConversion">
@@ -205,21 +235,6 @@
             <v-divider></v-divider>
   
             <v-list>
-              <v-list-item
-                router
-                :to="`/channels/${getCurrentUser.id}`"
-              >
-                <v-list-item-icon>
-                  <v-icon>mdi-account-box</v-icon>
-                </v-list-item-icon>
-                <v-list-item-title>Your channel</v-list-item-title>
-              </v-list-item>
-              <v-list-item router to="/studio">
-                <v-list-item-icon>
-                  <v-icon>mdi-youtube-studio</v-icon>
-                </v-list-item-icon>
-                <v-list-item-title>VueTube Studio</v-list-item-title>
-              </v-list-item>
               <v-list-item @click="signOut">
                 <v-list-item-icon>
                   <v-icon>mdi-login-variant</v-icon>
@@ -399,11 +414,10 @@
   <script>
   import { mapGetters } from 'vuex'
   import SubscriptionService from '@/services/SubscriptionService'
-  import HistoryService from '@/services/HistoryService'
   import NotificationService from '@/services/NotificationService'
   import moment from "moment";
   import OwnPlaylistService from '@/services/OwnPlaylistService';
-
+  import HistoryService from '@/services/HistoryService';
   export default {
     data: () => ({
       recording: false,
@@ -551,6 +565,8 @@
       searchText: '',
       runtimeTranscription_: '',
       lang_: "en-EN",
+      historyList: [],
+      deleteMessage: '',
       // user: null
     }),
     computed: {
@@ -561,23 +577,34 @@
         if (!this.searchText) return
         // console.log(this.searchText == this.$route.query['search-query'])
         if (this.searchText == this.$route.query['search-query']) return
-        // this.searchText = this.$route.query['search-query']
-        const data = {
-          history_type: 'search',
-          search_text: this.searchText,
-          userid: this.getCurrentUser.id
-        }
-  
-        if (this.isLoggedIn)
-          await HistoryService.createHistory(data).catch((err) =>
-            console.log(err)
-          )
-  
+        // this.searchText = this.$route.query['search-query']  
         this.$router.push({
           name: 'Search',
           query: { 'search-query': this.searchText }
         })
       },
+      async getHistoryList() {
+        const params = {
+          user_id: this.getCurrentUser.id
+        }
+        const history = await HistoryService.getHistorySearch(params).catch(
+          (err) => console.log(err)
+        )
+        console.log(history.data)
+        this.historyList = history.data
+      },
+      searchBy(text) {
+        this.searchText = text
+        this.search()
+      },
+      async removeSearchHistory(id) {
+        this.historyList = this.historyList.filter((item) => item.id != id)
+        await HistoryService.deleteById(id)
+        .catch((err) => {
+          console.log(err)
+        })
+      }
+      ,
       async getSubscribedChannels() {
         const params = {
           user_id: this.getCurrentUser.id
@@ -600,8 +627,7 @@
       },
       async getNotifications() {
         const params = {
-          user_id: this.getCurrentUser.id,
-          noti_type: 'recent_upload_video_notification'
+          user_id: this.getCurrentUser.id
         }
         const notifications = await NotificationService.getNotifications(
           params
@@ -609,6 +635,8 @@
 
         if (!notifications) return
         this.notifications = notifications.data
+        console.log('this.notifications')
+        console.log(this.notifications)
         this.notiCount = this.notifications.filter(notification => !notification.readAt).length
       },
       async updateNotification(notification) {
@@ -617,6 +645,7 @@
             console.log(err)
           })
         if (!newNotification) return
+        if (notification.notiType === 'comming_video_notification' ) return
         this.$router.push({
           name: 'WatchVideo',
           params: {id: notification.videoId}
@@ -691,6 +720,7 @@
       // if (this.$route.query['search-query'])
       //   this.searchText = this.$route.query['search-query']
       if (this.isLoggedIn) {
+        this.getHistoryList()
         this.getOwnPlaylists()
         this.getNotifications()
         this.getSubscribedChannels()
@@ -851,6 +881,24 @@
     .vb.vb-dragging-phantom > .vb-dragger > .vb-dragger-styler {
       background-color: rgba(48, 121, 244, 0.5);
     }
+  }
+  .searchHistory {
+    font-size: 1rem;
+    background-color: white;
+    font-weight: 400;
+    // padding: 0.5rem;
+  }
+  .searchHistory:hover {
+    background-color: #eeeeee;
+  }
+  .btnRemove {
+    background-color: white !important;;
+    margin: 5px !important;
+    font-size: 0.8rem !important;
+    color: #f34423 !important;
+  }
+  .searchCard {
+    max-width: 600px;
   }
   </style>
   
